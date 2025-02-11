@@ -5,6 +5,7 @@ import {
   createPost,
   getPostById,
   updatePost,
+  deletePost,
 } from "./controller/PostController";
 
 const app = new Hono();
@@ -13,6 +14,7 @@ app.get("/api/posts", getPosts);
 app.post("/api/posts", createPost);
 app.get("/api/posts/:id", getPostById);
 app.patch("/api/posts/:id", updatePost);
+app.delete("/api/posts/:id", deletePost);
 
 const port = 3000;
 console.log(`Server is running on http://localhost:${port}`);

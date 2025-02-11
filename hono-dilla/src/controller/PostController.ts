@@ -137,3 +137,29 @@ export async function updatePost(c: Context) {
     console.error(`Error updating post: ${e}`);
   }
 }
+
+/**
+ * Deleting a post
+ */
+export async function deletePost(c: Context) {
+  try {
+    // Konversi tipe id menjadi number
+    const postId = parseInt(c.req.param("id"));
+
+    //delete post with prisma
+    await prisma.post.delete({
+      where: { id: postId },
+    });
+
+    //return JSON
+    return c.json(
+      {
+        success: true,
+        message: "Post Deleted Successfully!",
+      },
+      200
+    );
+  } catch (e: unknown) {
+    console.error(`Error deleting post: ${e}`);
+  }
+}
