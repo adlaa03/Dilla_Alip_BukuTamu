@@ -1,5 +1,6 @@
 //import hono
 import { Hono } from "hono";
+import { apiKeyAuth } from "../middleware/auth.js";
 
 //import controller
 import {
@@ -11,6 +12,7 @@ import {
 } from "../controller/PostController";
 
 import { basicAuth } from "hono/basic-auth";
+import prisma from "../../prisma/client/index.js";
 
 //inistialize router
 const router = new Hono();
@@ -21,6 +23,17 @@ router.use(
     password: "adilla123",
   })
 );
+
+router.get("/", async (c) => {
+  const auth = await prisma.auth.findFirst();
+  if (auth) {
+    return c.json({
+      statusCode: 200,
+      message: "Authorized",
+      key: auth.key,
+    });
+  }
+});
 
 router.get("/auth/page", (c) => {
   return c.text("You are authorized");

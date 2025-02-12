@@ -16,3 +16,8 @@ model Post {
 
   @@map("posts")
 }
+
+model Auth {
+  key       String   @id 
+  @@map("auth")
+}
