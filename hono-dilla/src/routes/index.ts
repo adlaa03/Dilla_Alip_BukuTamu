@@ -1,6 +1,5 @@
 //import hono
 import { Hono } from "hono";
-import { apiKeyAuth } from "../middleware/auth.js";
 
 //import controller
 import {
@@ -13,6 +12,7 @@ import {
 
 import { basicAuth } from "hono/basic-auth";
 import prisma from "../../prisma/client/index.js";
+import { apiKeyAuth } from "../middleware/auth";
 
 //inistialize router
 const router = new Hono();
@@ -39,19 +39,20 @@ router.get("/auth/page", (c) => {
   return c.text("You are authorized");
 });
 
+router.use("*", apiKeyAuth);
 //routes posts index
-router.get("/", (c) => getPosts(c));
+router.get("/data", (c) => getPosts(c));
 
 //routes posts create
-router.post("/", (c) => createPost(c));
+router.post("/data", (c) => createPost(c));
 
 //routes posts detail
-router.get("/:id", (c) => getPostById(c));
+router.get("/data/:id", (c) => getPostById(c));
 
 //route post update
-router.patch("/:id", (c) => updatePost(c));
+router.put("/data/:id", (c) => updatePost(c));
 
 //route post delete
-router.delete("/:id", (c) => deletePost(c));
+router.delete("/data/:id", (c) => deletePost(c));
 
 export const Routes = router;

@@ -2,7 +2,7 @@ import type { Context, Next } from "hono";
 import prisma from "../../prisma/client";
 
 export const apiKeyAuth = async (c: Context, next: Next) => {
-  const apiKey = c.req.header("api-key-shita");
+  const apiKey = c.req.header("api-key-dilla");
   if (!apiKey) {
     return c.json(
       { statusCode: 401, message: "Masukan API key terlebih dahulu" },

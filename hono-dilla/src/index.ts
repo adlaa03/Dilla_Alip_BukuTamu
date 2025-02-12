@@ -24,7 +24,7 @@ serve({
 });
 
 app.route("/posts", Routes);
-// app.route("/adilla", Routes);
+
 export const GET = handle(app);
 export const POST = handle(app);
 export const PUT = handle(app);
