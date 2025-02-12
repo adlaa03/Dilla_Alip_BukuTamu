@@ -10,8 +10,21 @@ import {
   updatePost,
 } from "../controller/PostController";
 
+import { basicAuth } from "hono/basic-auth";
+
 //inistialize router
 const router = new Hono();
+router.use(
+  "/auth/*",
+  basicAuth({
+    username: "adilla",
+    password: "adilla123",
+  })
+);
+
+router.get("/auth/page", (c) => {
+  return c.text("You are authorized");
+});
 
 //routes posts index
 router.get("/", (c) => getPosts(c));

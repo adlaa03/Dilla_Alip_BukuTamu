@@ -1,21 +1,9 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import {
-  getPosts,
-  createPost,
-  getPostById,
-  updatePost,
-  deletePost,
-} from "./controller/PostController";
+import { Routes } from "./routes/index.js";
+import { handle } from "hono/vercel";
 
-const app = new Hono();
-
-app.get("/api/posts", getPosts);
-app.post("/api/posts", createPost);
-app.get("/api/posts/:id", getPostById);
-app.patch("/api/posts/:id", updatePost);
-app.delete("/api/posts/:id", deletePost);
-
+const app = new Hono().basePath("/api");
 const port = 3000;
 console.log(`Server is running on http://localhost:${port}`);
 
@@ -23,3 +11,12 @@ serve({
   fetch: app.fetch,
   port,
 });
+
+app.route("/posts", Routes);
+app.route("/adilla", Routes);
+export const GET = handle(app);
+export const POST = handle(app);
+export const PUT = handle(app);
+export const DELETE = handle(app);
+
+export default app;
