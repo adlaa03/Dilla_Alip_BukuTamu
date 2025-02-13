@@ -13,14 +13,7 @@ export const getPosts = async (c: Context) => {
     const posts = await prisma.post.findMany({ orderBy: { id: "desc" } });
 
     //return JSON
-    return c.json(
-      {
-        success: true,
-        message: "List Data Posts!",
-        data: posts,
-      },
-      200
-    );
+    return c.json(posts);
   } catch (e: unknown) {
     console.error(`Error getting posts: ${e}`);
   }

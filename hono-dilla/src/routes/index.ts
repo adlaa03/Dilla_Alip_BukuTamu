@@ -16,30 +16,30 @@ import { apiKeyAuth } from "../middleware/auth";
 
 //inistialize router
 const router = new Hono();
-router.use(
-  "/auth/*",
-  basicAuth({
-    username: "adilla",
-    password: "adilla123",
-  })
-);
+// router.use(
+//   "/auth/*",
+//   basicAuth({
+//     username: "adilla",
+//     password: "adilla123",
+//   })
+// );
 
-router.get("/", async (c) => {
-  const auth = await prisma.auth.findFirst();
-  if (auth) {
-    return c.json({
-      statusCode: 200,
-      message: "Authorized",
-      key: auth.key,
-    });
-  }
-});
+// router.get("/", async (c) => {
+//   const auth = await prisma.auth.findFirst();
+//   if (auth) {
+//     return c.json({
+//       statusCode: 200,
+//       message: "Authorized",
+//       key: auth.key,
+//     });
+//   }
+// });
 
 router.get("/auth/page", (c) => {
   return c.text("You are authorized");
 });
 
-router.use("*", apiKeyAuth);
+// router.use("*", apiKeyAuth);
 //routes posts index
 router.get("/data", (c) => getPosts(c));
 
