@@ -19,5 +19,6 @@ model Post {
 
 model Auth {
   key       String   @id 
+  jwt String
   @@map("auth")
 }

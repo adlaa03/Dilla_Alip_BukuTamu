@@ -1,8 +1,8 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import { Routes } from "./routes/index.js";
 import { handle } from "hono/vercel";
 import { cors } from "hono/cors";
+import { postRouter } from "./routes";
 
 const app = new Hono().basePath("/api");
 
@@ -23,7 +23,7 @@ serve({
   port,
 });
 
-app.route("/posts", Routes);
+app.route("/posts", postRouter);
 
 export const GET = handle(app);
 export const POST = handle(app);

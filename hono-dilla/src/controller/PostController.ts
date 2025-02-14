@@ -9,6 +9,7 @@ import prisma from "../../prisma/client";
  */
 export const getPosts = async (c: Context) => {
   try {
+    console.log("getpost", c);
     //get all posts
     const posts = await prisma.post.findMany({ orderBy: { id: "desc" } });
 
