@@ -2,9 +2,9 @@
 import { getApiKey, getAuthToken } from "@/app/utils/authHelper";
 import { NextRequest, NextResponse } from "next/server";
 
-const token = "adyasdfadifyftayhujhgtfr6tgyhfrxer6tyggc67gyubyt676yh";
-const apiKey =
-  "ixqGdgFJZuCOcS6ugvDHdCOin5knMUT2yKKAclWEiwN6NxBH5YB6ljt5pLuLc4LGRSedPwdIO90NvMPH6xPWl5ibAbjuNekXrNqBSsVrvhLUoRJAAj0ZVTabBMVsOiKR";
+// const token = "adyasdfadifyftayhujhgtfr6tgyhfrxer6tyggc67gyubyt676yh";
+// const apiKey =
+//   "ixqGdgFJZuCOcS6ugvDHdCOin5knMUT2yKKAclWEiwN6NxBH5YB6ljt5pLuLc4LGRSedPwdIO90NvMPH6xPWl5ibAbjuNekXrNqBSsVrvhLUoRJAAj0ZVTabBMVsOiKR";
 
 export async function GET(
   request: NextRequest,
@@ -12,8 +12,8 @@ export async function GET(
 ) {
   console.log("REQUEST: ", request + "params: ", params);
   try {
-    // const token = await getAuthToken();
-    // const apiKey = await getApiKey(token);
+    const token = await getAuthToken();
+    const apiKey = await getApiKey(token);
 
     const res = await fetch(
       `http://localhost:3000/api/posts/data/${params.id}`,

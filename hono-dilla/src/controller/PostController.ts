@@ -26,7 +26,7 @@ export const getPosts = async (c: Context) => {
 export async function createPost(c: Context) {
   try {
     //get body request
-    const body = await c.req.parseBody();
+    const body = await c.req.json();
 
     //check if title and content is string
     const username =
@@ -107,7 +107,7 @@ export async function updatePost(c: Context) {
     const postId = parseInt(c.req.param("id"));
 
     //get body request
-    const body = await c.req.parseBody();
+    const body = await c.req.json();
 
     //check if title and content is string
     const username =

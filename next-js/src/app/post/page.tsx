@@ -30,7 +30,7 @@ export default function Users() {
 
   if (!data) return <div>Loading...</div>;
 
-  const delete_User: PostModel["deletePost"] = async (id: number) => {
+  const delete_Post: PostModel["deletePost"] = async (id: number) => {
     const res = await fetch(`/utils/queries/users/${id}`, {
       method: "DELETE",
       headers: {
@@ -53,7 +53,7 @@ export default function Users() {
           <span className="text-red-500 font-bold">{users.length}</span>
           <p>
             <Link
-              href={`/users/create`}
+              href={`/post/create`}
               className="bg-green-500 p-2 mt-6 inline-block text-white"
             >
               Create
@@ -72,7 +72,7 @@ export default function Users() {
         </thead>
         <tbody>
           {users.map((item: PostModel) => (
-            <Post key={item.id} {...item} deletePost={delete_User} />
+            <Post key={item.id} {...item} deletePost={delete_Post} />
           ))}
         </tbody>
       </table>

@@ -16,14 +16,16 @@ export default function Post(params: PostModel) {
         >
           Delete
         </span>
+
         <Link
-          href={`/posts/edit/${params.id}`}
+          href={`/post/edit/${params.id}`}
           className="bg-yellow-500 p-2 inline-block ml-3 text-white text-sm"
         >
           Edit
         </Link>
+
         <Link
-          href={`/posts/read/${params.id}`}
+          href={`/post/read/${params.id}`}
           className="bg-yellow-500 p-2 inline-block ml-3 text-white text-sm"
         >
           View
