@@ -8,17 +8,16 @@ datasource db {
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
-  title     String   @db.VarChar(255)
-  content   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id       Int     @id @default(autoincrement())
+  username String  @db.VarChar(255)
+  name     String? @db.VarChar(191)
+  address  String? @db.VarChar(300)
+  phone    String  @db.VarChar(300)
 
   @@map("posts")
 }
 
 model Auth {
   key       String   @id 
-  jwt String
   @@map("auth")
 }

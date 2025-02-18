@@ -1,5 +1,10 @@
 export default async function Page() {
-  const response = await fetch("http://localhost:3000/api/posts/data");
+  const response = await fetch("http://localhost:3000/api/posts/data", {
+    headers: {
+      "api-key-dilla": process.env.API_KEY ?? "",
+      "jwt-dilla": process.env.JWT ?? "",
+    },
+  });
   if (!response.ok) {
     return <div>Error: {response.statusText}</div>;
   }

@@ -29,14 +29,19 @@ export async function createPost(c: Context) {
     const body = await c.req.parseBody();
 
     //check if title and content is string
-    const title = typeof body["title"] === "string" ? body["title"] : "";
-    const content = typeof body["content"] === "string" ? body["content"] : "";
+    const username =
+      typeof body["username"] === "string" ? body["username"] : "";
+    const name = typeof body["name"] === "string" ? body["name"] : "";
+    const address = typeof body["address"] === "string" ? body["address"] : "";
+    const phone = typeof body["phone"] === "string" ? body["phone"] : "";
 
     //create post
     const post = await prisma.post.create({
       data: {
-        title: title,
-        content: content,
+        username: username,
+        name: name,
+        address: address,
+        phone: phone,
       },
     });
 
@@ -105,16 +110,21 @@ export async function updatePost(c: Context) {
     const body = await c.req.parseBody();
 
     //check if title and content is string
-    const title = typeof body["title"] === "string" ? body["title"] : "";
-    const content = typeof body["content"] === "string" ? body["content"] : "";
+    const username =
+      typeof body["username"] === "string" ? body["username"] : "";
+    const name = typeof body["name"] === "string" ? body["name"] : "";
+    const address = typeof body["address"] === "string" ? body["address"] : "";
+    const phone = typeof body["phone"] === "string" ? body["phone"] : "";
 
     //update post with prisma
     const post = await prisma.post.update({
       where: { id: postId },
       data: {
-        title: title,
-        content: content,
-        updatedAt: new Date(),
+        username: username,
+        name: name,
+        address: address,
+        phone: phone,
+        // updatedAt: new Date(),
       },
     });
 
