@@ -1,5 +1,7 @@
 import type { Context, Next } from "hono";
-import prisma from "../../prisma/client";
+import { db } from "../db/index.js";
+import { eq } from "drizzle-orm";
+import { auth } from "../db/schema.js";
 
 export const apiKeyAuth = async (c: Context, next: Next) => {
   const apiKey = c.req.header("api-key-dilla");
@@ -10,12 +12,12 @@ export const apiKeyAuth = async (c: Context, next: Next) => {
     );
   }
 
-  const auth = await prisma.auth.findFirst({
-    where: { key: apiKey },
+  const data = await db.query.auth.findFirst({
+    where: eq(auth.key, apiKey),
   });
-  if (!auth) {
-    return c.json({ statusCode: 401, message: "API key salah" }, 401);
-  }
 
+  if (!data) {
+    return c.json({ statusCode: 401, message: "Api key salah" }, 401);
+  }
   await next();
 };

@@ -6,14 +6,15 @@ import {
   createPost,
   deletePost,
   getPostById,
-  getPosts,
+  getPost,
   updatePost,
 } from "../controller/PostController";
 
 import { basicAuth } from "hono/basic-auth";
-import prisma from "../../prisma/client/index.js";
-import { apiKeyAuth } from "../middleware/auth";
 import { bearerAuth } from "hono/bearer-auth";
+
+import { db } from "../db/index.js";
+import { apiKeyAuth } from "../middleware/auth";
 
 import { jwt } from "hono/jwt";
 import type { JwtVariables } from "hono/jwt";
@@ -26,7 +27,7 @@ const SECRET_KEY: any = process.env.KEY;
 postRouter.post("/login", loginUser);
 
 postRouter.get("/", async (c) => {
-  const auth = await prisma.auth.findFirst();
+  const auth = await db.query.auth.findFirst();
 
   if (auth) {
     return c.json({
@@ -41,7 +42,7 @@ postRouter.use("/data/*", jwt({ secret: SECRET_KEY }));
 
 postRouter.use("/data/*", apiKeyAuth);
 //routes posts index
-postRouter.get("/data", (c) => getPosts(c));
+postRouter.get("/data", (c) => getPost(c));
 
 //routes posts create
 postRouter.post("/data", (c) => createPost(c));
@@ -96,23 +97,3 @@ postRouter.delete("/data/:id", (c) => deletePost(c));
 //   const payload = c.get("jwtPayload");
 //   return c.json(payload); // eg: { "sub": "1234567890", "name": "dilla", "iat": 1516239022 }
 // });
-
-// postRouter.get("/adilla", apiKeyAuth, async (c) => {
-//   const auth = await prisma.auth.findFirst();
-//   if (auth) {
-//     return c.json({
-//       statusCode: 200,
-//       message: "Authorized",
-//       key: auth.key,
-//       jwt: auth.jwt,
-//     });
-//   }
-// });
-
-// Specify the variable types to infer the `c.get('jwtPayload')`:
-// postRouter.use(
-//   "/auth/*",
-//   jwt({
-//     secret: "41175c2343889ebf33d0e286b67f6d17bcb8c426a856d4466137baba022edf3f",
-//   })
-// );
