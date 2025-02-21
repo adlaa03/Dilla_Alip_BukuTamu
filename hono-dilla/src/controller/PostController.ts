@@ -1,8 +1,8 @@
 import { Context } from "hono";
 
-import { post } from "../db/schema.js";
 import { asc, eq } from "drizzle-orm";
-import { db } from "../db/index.js";
+import { db } from "../db/index";
+import { post } from "../db/schema";
 
 export const getPost = async (c: Context) => {
   try {
@@ -33,7 +33,12 @@ export async function createPost(c: Context) {
       phone: phone,
     });
 
-    return c.json(data);
+    return c.json({
+      username: username,
+      name: name,
+      address: address,
+      phone: phone,
+    });
   } catch (e: unknown) {
     console.error(`Error creating post: ${e}`);
   }

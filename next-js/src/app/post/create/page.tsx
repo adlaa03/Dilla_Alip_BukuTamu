@@ -30,8 +30,11 @@ export default function UserCreate() {
       });
 
       const content = await add.json();
-      if (content.success > 0) {
+      if (content) {
         router.push("/post");
+        alert("data berhasil ditambah");
+      } else {
+        alert(content.message);
       }
     }
   };

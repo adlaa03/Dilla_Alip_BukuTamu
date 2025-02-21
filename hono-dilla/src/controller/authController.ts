@@ -1,6 +1,8 @@
 import type { Context } from "hono";
 import { sign } from "hono/jwt";
+
 const SECRET_KEY: any = process.env.KEY;
+
 export async function loginUser(c: Context) {
   try {
     const body = await c.req.json();
