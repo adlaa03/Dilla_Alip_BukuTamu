@@ -3,6 +3,7 @@ import { Context } from "hono";
 import { asc, eq } from "drizzle-orm";
 import { db } from "../db/index";
 import { post } from "../db/schema";
+import prisma from "../../prisma/client";
 
 export const getPost = async (c: Context) => {
   try {
@@ -92,6 +93,34 @@ export async function updatePost(c: Context) {
     console.error(`Error updating post: ${e}`);
   }
 }
+
+// export async function updatePost(c: Context) {
+//   try {
+//     const userId = parseInt(c.req.param("id"));
+
+//     const body = await c.req.json();
+
+//     const username =
+//       typeof body["username"] === "string" ? body["username"] : "";
+//     const name = typeof body["name"] === "string" ? body["name"] : "";
+//     const address = typeof body["address"] === "string" ? body["address"] : "";
+//     const phone = typeof body["phone"] === "string" ? body["phone"] : "";
+
+//     const user = await prisma.post.update({
+//       where: { id: userId },
+//       data: {
+//         username: username,
+//         name: name,
+//         address: address,
+//         phone: phone,
+//       },
+//     });
+
+//     return c.json(user);
+//   } catch (e: unknown) {
+//     console.error(`Error updating post: ${e}`);
+//   }
+// }
 
 export async function deletePost(c: Context) {
   try {

@@ -34,8 +34,7 @@ export default function PostEdit({
 
   const updateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    // if (username !== "" && name !== "" && address !== "" && phone !== "")
-    {
+    if (username !== "" && name !== "" && address !== "" && phone !== "") {
       const formData = { username, name, address, phone };
 
       const res = await fetch(`/utils/queries/users/${resolvedParams.id}`, {
@@ -72,7 +71,7 @@ export default function PostEdit({
             className="w-full border-[1px] border-gray-200 p-2 rounded-sm"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            required
+            // required
           />
         </div>
         <div className="w-full py-2">
@@ -83,7 +82,7 @@ export default function PostEdit({
             className="w-full border-[1px] border-gray-200 p-2 rounded-sm"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            required
+            // required
           />
         </div>
         <div className="w-full py-2">
@@ -93,7 +92,7 @@ export default function PostEdit({
             className="w-full border-[1px] border-gray-200 p-2 rounded-sm"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            required
+            // required
           />
         </div>
         <div className="w-full py-2">
@@ -104,7 +103,7 @@ export default function PostEdit({
             className="w-full border-[1px] border-gray-200 p-2 rounded-sm"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            required
+            // required
           />
         </div>
         <div className="w-full py-2">
