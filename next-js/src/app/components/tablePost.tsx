@@ -16,12 +16,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PostModel } from "../types";
-import { Button } from "@/components/button";
-// import { DELETE } from "../utils/queries/users/[id]/route";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { mutate } from "swr";
 
-// const delete_Post: PostModel["deletePost"] = async (id: number) => {
 const DELETE = async (post: { id: number }) => {
   const res = await fetch(`/utils/queries/users/${post.id}`, {
     method: "DELETE",
@@ -33,9 +31,6 @@ const DELETE = async (post: { id: number }) => {
   if (content.success > 0) {
     mutate(`/utils/queries/users`);
   }
-  // if (content.success > 0) {
-  //   // setUsers(users.filter((user: PostModel) => user.id !== id));
-  //   setUsers(users.filter((user) => user.id !== id));
 };
 
 export default function DataTable({ data }: { data: PostModel[] }) {
