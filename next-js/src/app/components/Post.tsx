@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { PostModel } from "../types";
+
 export default function Post(params: PostModel) {
   return (
     <tr>

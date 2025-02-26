@@ -1,4 +1,7 @@
+// /* eslint-disable @typescript-eslint/no-explicit-any */
+// import { getApiKey, getAuthToken } from "@/app/utils/authHelper";
 import { NextRequest, NextResponse } from "next/server";
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: number } }
@@ -33,6 +36,30 @@ export async function PUT(
   const data = await res.json();
   return NextResponse.json(data);
 }
+
+// export async function DELETE(params: { id: number }) {
+//   try {
+//     const token = await getAuthToken();
+//     const apiKey = await getApiKey(token);
+
+//     const res = await fetch(
+//       `http://localhost:3000/api/posts/data/${params.id}`,
+//       {
+//         next: { revalidate: 10 },
+//         method: "DELETE",
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//           "api-key": apiKey,
+//         },
+//       }
+//     );
+
+//     return await res.json();
+//   } catch (error: any) {
+//     throw new Error(error.message);
+//   }
+// }
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: number } }

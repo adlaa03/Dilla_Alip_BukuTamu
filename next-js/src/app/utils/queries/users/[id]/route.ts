@@ -80,16 +80,13 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: number } }
-) {
+export async function DELETE(body: { request?: NextRequest; paramId: number }) {
   try {
     const token = await getAuthToken();
     const apiKey = await getApiKey(token);
 
     const res = await fetch(
-      `http://localhost:3000/api/posts/data/${params.id}`,
+      `http://localhost:3000/api/posts/data/${body.paramId}`,
       {
         next: { revalidate: 10 },
         method: "DELETE",
