@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
-import { getApiKey, getAuthToken } from "../../authHelper";
+import { getApiKey, getAuthToken } from "@/app/utils/authHelper";
 
 export async function GET() {
   try {

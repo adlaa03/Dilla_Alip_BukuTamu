@@ -14,7 +14,7 @@ export async function GET(
     const res = await fetch(
       `http://localhost:3000/api/posts/data/${params.id}`,
       {
-        // next: { revalidate: 10 },
+        next: { revalidate: 10 },
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -80,13 +80,13 @@ export async function PUT(
   }
 }
 
-export async function DELETE(body: { request?: NextRequest; paramId: number }) {
+export async function DELETE(params: { id: number }) {
   try {
     const token = await getAuthToken();
     const apiKey = await getApiKey(token);
 
     const res = await fetch(
-      `http://localhost:3000/api/posts/data/${body.paramId}`,
+      `http://localhost:3000/api/posts/data/${params.id}`,
       {
         next: { revalidate: 10 },
         method: "DELETE",

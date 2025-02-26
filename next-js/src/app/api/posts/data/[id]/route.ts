@@ -1,5 +1,4 @@
 // /* eslint-disable @typescript-eslint/no-explicit-any */
-// import { getApiKey, getAuthToken } from "@/app/utils/authHelper";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -7,7 +6,8 @@ export async function GET(
   { params }: { params: { id: number } }
 ) {
   const res = await fetch(
-    process.env.PATH_URL_BACKEND + `/api/posts/${params.id}`,
+    // process.env.PATH_URL_BACKEND + `/api/posts/${params.id}`,
+    `http://localhost:3000/api/posts/${params.id}`,
     {
       next: { revalidate: 10 },
       headers: {
@@ -16,7 +16,8 @@ export async function GET(
     }
   );
   const result = await res.json();
-  return NextResponse.json(result);
+  console.log(result);
+  return result;
 }
 export async function PUT(
   request: NextRequest,
@@ -24,7 +25,8 @@ export async function PUT(
 ) {
   const body = await request.json();
   const res = await fetch(
-    process.env.PATH_URL_BACKEND + `/api/posts/${params.id}`,
+    // process.env.PATH_URL_BACKEND + `/api/posts/${params.id}`,
+    `http://localhost:3000/api/posts/${params.id}`,
     {
       method: "PUT",
       headers: {
@@ -65,7 +67,8 @@ export async function DELETE(
   { params }: { params: { id: number } }
 ) {
   const res = await fetch(
-    process.env.PATH_URL_BACKEND + `/api/posts/${params.id}`,
+    // process.env.PATH_URL_BACKEND + `/api/posts/${params.id}`,
+    `http://localhost:3000/api/posts/data/${params.id}`,
     {
       next: { revalidate: 10 },
       method: "DELETE",
