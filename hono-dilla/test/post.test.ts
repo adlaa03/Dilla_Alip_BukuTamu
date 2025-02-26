@@ -7,169 +7,172 @@ import {
   getPost,
   updatePost,
 } from "../src/controller/PostController";
+import { db } from "../src/db";
+import { post } from "../src/db/schema";
+import { eq } from "drizzle-orm";
 
-// describe("getPost test", () => {
-//   test("getPost test", async () => {
-//     const getPostsTest = {
-//       json: jest.fn(),
-//     } as unknown as Context;
+describe("getPost test", () => {
+  test("getPost test", async () => {
+    const getPostsTest = {
+      json: jest.fn(),
+    } as unknown as Context;
 
-//     const posts = await prisma.post.findMany();
+    const posts = await prisma.post.findMany();
 
-//     await getPost(getPostsTest);
+    await getPost(getPostsTest);
 
-//     expect(getPostsTest.json).toHaveBeenCalledWith(posts);
-//   });
+    expect(getPostsTest.json).toHaveBeenCalledWith(posts);
+  });
 
-//   test("getPostById test", async () => {
-//     const postId = 10;
-//     const getPostsByIdTest = {
-//       req: {
-//         param: jest.fn().mockReturnValue(postId),
-//       },
-//       json: jest.fn(),
-//     } as unknown as Context;
+  test("getPostById test", async () => {
+    const postId = 10;
+    const getPostsByIdTest = {
+      req: {
+        param: jest.fn().mockReturnValue(postId),
+      },
+      json: jest.fn(),
+    } as unknown as Context;
 
-//     const posts = await prisma.post.findMany();
+    const Posts = await prisma.post.findMany();
 
-//     await getPost(getPostsByIdTest);
+    await getPost(getPostsByIdTest);
 
-//     expect(getPostsByIdTest.json).toHaveBeenCalledWith(posts);
-//   });
-// });
+    expect(getPostsByIdTest.json).toHaveBeenCalledWith(Posts);
+  });
+});
 
-// describe("createPost test", () => {
-//   test("createPost test", async () => {
-//     const createTest = {
-//       req: {
-//         json: jest.fn().mockResolvedValue({
-//           username: "user",
-//           name: "name",
-//           address: "address",
-//           phone: "000000000000",
-//         }),
-//       },
-//       json: jest.fn(),
-//     } as unknown as Context;
+describe("createPost test", () => {
+  test("createPost test", async () => {
+    const createTest = {
+      req: {
+        json: jest.fn().mockResolvedValue({
+          username: "user",
+          name: "name",
+          address: "address",
+          phone: "000000000000",
+        }),
+      },
+      json: jest.fn(),
+    } as unknown as Context;
 
-//     const newPostData = {
-//       username: "user",
-//       name: "name",
-//       address: "address",
-//       phone: "000000000000",
-//     };
+    const newPostData = {
+      username: "user",
+      name: "name",
+      address: "address",
+      phone: "000000000000",
+    };
 
-//     await createPost(createTest);
+    await createPost(createTest);
 
-//     expect(createTest.json).toHaveBeenCalledWith(
-//       expect.objectContaining(newPostData)
-//     );
-//   });
+    expect(createTest.json).toHaveBeenCalledWith(
+      expect.objectContaining(newPostData)
+    );
+  });
 
-//   test("createUser without username", async () => {
-//     const createTest = {
-//       req: {
-//         json: jest.fn().mockReturnValue({
-//           name: "name user",
-//           address: "address",
-//           phone: "000000000000",
-//         }),
-//       },
-//       json: jest.fn(),
-//     } as unknown as Context;
+  test("createUser without username", async () => {
+    const createTest = {
+      req: {
+        json: jest.fn().mockReturnValue({
+          name: "name user",
+          address: "address",
+          phone: "000000000000",
+        }),
+      },
+      json: jest.fn(),
+    } as unknown as Context;
 
-//     const newPostData = {
-//       name: "name user",
-//       address: "address",
-//       phone: "000000000000",
-//     };
+    const newPostData = {
+      name: "name user",
+      address: "address",
+      phone: "000000000000",
+    };
 
-//     await createPost(createTest);
+    await createPost(createTest);
 
-//     expect(createTest.json).toHaveBeenCalledWith(
-//       expect.objectContaining({
-//         name: "name user",
-//         address: "address",
-//         phone: "000000000000",
-//       })
-//     );
-//   });
+    expect(createTest.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "name user",
+        address: "address",
+        phone: "000000000000",
+      })
+    );
+  });
 
-//   test("createUser without name", async () => {
-//     const createTest = {
-//       req: {
-//         json: jest.fn().mockReturnValue({
-//           username: "username",
-//           address: "address",
-//           phone: "000000000000",
-//         }),
-//       },
-//       json: jest.fn(),
-//     } as unknown as Context;
+  test("createUser without name", async () => {
+    const createTest = {
+      req: {
+        json: jest.fn().mockReturnValue({
+          username: "username",
+          address: "address",
+          phone: "000000000000",
+        }),
+      },
+      json: jest.fn(),
+    } as unknown as Context;
 
-//     const newPostData = {
-//       username: "username",
-//       address: "address",
-//       phone: "000000000000",
-//     };
+    const newPostData = {
+      username: "username",
+      address: "address",
+      phone: "000000000000",
+    };
 
-//     await createPost(createTest);
+    await createPost(createTest);
 
-//     expect(createTest.json).toHaveBeenCalledWith(
-//       expect.objectContaining(newPostData)
-//     );
-//   });
+    expect(createTest.json).toHaveBeenCalledWith(
+      expect.objectContaining(newPostData)
+    );
+  });
 
-//   test("createUser without address", async () => {
-//     const createTest = {
-//       req: {
-//         json: jest.fn().mockReturnValue({
-//           username: "username",
-//           name: "name",
-//           phone: "000000000000",
-//         }),
-//       },
-//       json: jest.fn(),
-//     } as unknown as Context;
+  test("createUser without address", async () => {
+    const createTest = {
+      req: {
+        json: jest.fn().mockReturnValue({
+          username: "username",
+          name: "name",
+          phone: "000000000000",
+        }),
+      },
+      json: jest.fn(),
+    } as unknown as Context;
 
-//     const newPostData = {
-//       username: "username",
-//       name: "name",
-//       phone: "000000000000",
-//     };
+    const newPostData = {
+      username: "username",
+      name: "name",
+      phone: "000000000000",
+    };
 
-//     await createPost(createTest);
+    await createPost(createTest);
 
-//     expect(createTest.json).toHaveBeenCalledWith(
-//       expect.objectContaining(newPostData)
-//     );
-//   });
+    expect(createTest.json).toHaveBeenCalledWith(
+      expect.objectContaining(newPostData)
+    );
+  });
 
-//   test("createUser without phone", async () => {
-//     const createTest = {
-//       req: {
-//         json: jest.fn().mockReturnValue({
-//           username: "username",
-//           name: "name",
-//           address: "address",
-//         }),
-//       },
-//       json: jest.fn(),
-//     } as unknown as Context;
+  test("createUser without phone", async () => {
+    const createTest = {
+      req: {
+        json: jest.fn().mockReturnValue({
+          username: "username",
+          name: "name",
+          address: "address",
+        }),
+      },
+      json: jest.fn(),
+    } as unknown as Context;
 
-//     const newPostData = {
-//       username: "username",
-//       name: "name",
-//       address: "address",
-//     };
+    const newPostData = {
+      username: "username",
+      name: "name",
+      address: "address",
+    };
 
-//     await createPost(createTest);
+    await createPost(createTest);
 
-//     expect(createTest.json).toHaveBeenCalledWith(
-//       expect.objectContaining(newPostData)
-//     );
-//   });
-// });
+    expect(createTest.json).toHaveBeenCalledWith(
+      expect.objectContaining(newPostData)
+    );
+  });
+});
 
 describe("updatePost describe", () => {
   test("updatePost update all", async () => {
@@ -294,44 +297,44 @@ describe("updatePost describe", () => {
   });
 });
 
-// describe("deletePost test", () => {
-//   test("deletePost test", async () => {
-//     const postId = 10;
-//     const deleteTest = {
-//       req: {
-//         param: jest.fn().mockReturnValue(postId),
-//       },
-//       json: jest.fn(),
-//     } as unknown as Context;
+describe("deletePost test", () => {
+  test("deletePost test", async () => {
+    const postId = 10;
+    const deleteTest = {
+      req: {
+        param: jest.fn().mockReturnValue(postId),
+      },
+      json: jest.fn(),
+    } as unknown as Context;
 
-//     await deletePost(deleteTest);
+    await deletePost(deleteTest);
 
-//     expect(deleteTest.json).toHaveBeenCalledWith(
-//       {
-//         message: "User Berhasil Dihapus!",
-//         statusCode: 200,
-//       },
-//       200
-//     );
-//   });
+    expect(deleteTest.json).toHaveBeenCalledWith(
+      {
+        message: "User Berhasil Dihapus!",
+        statusCode: 200,
+      },
+      200
+    );
+  });
 
-//   test("deletePost id doenst exist", async () => {
-//     const postId = 11;
-//     const deleteTest = {
-//       req: {
-//         param: jest.fn().mockReturnValue(postId),
-//       },
-//       json: jest.fn(),
-//     } as unknown as Context;
+  test("deletePost id doenst exist", async () => {
+    const postId = 11;
+    const deleteTest = {
+      req: {
+        param: jest.fn().mockReturnValue(postId),
+      },
+      json: jest.fn(),
+    } as unknown as Context;
 
-//     await deletePost(deleteTest);
+    await deletePost(deleteTest);
 
-//     expect(deleteTest.json).toHaveBeenCalledWith(
-//       {
-//         message: "User Berhasil Dihapus!",
-//         statusCode: 200,
-//       },
-//       200
-//     );
-//   });
-// });
+    expect(deleteTest.json).toHaveBeenCalledWith(
+      {
+        message: "User Berhasil Dihapus!",
+        statusCode: 200,
+      },
+      200
+    );
+  });
+});
