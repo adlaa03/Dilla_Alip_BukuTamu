@@ -48,9 +48,12 @@ export async function createPost(c: Context) {
 export async function getPostById(c: Context) {
   try {
     const postId = parseInt(c.req.param("id"));
-    const data = await db.select().from(post).where(eq(post.id, postId));
+    console.log("Post ID:", postId);
 
-    if (!data) {
+    const data = await db.select().from(post).where(eq(post.id, postId));
+    console.log("Post data:", data);
+
+    if (data.length === 0) {
       return c.json(
         {
           success: false,
@@ -60,44 +63,16 @@ export async function getPostById(c: Context) {
       );
     }
 
-    return c.json(data);
+    return c.json(data[0]);
   } catch (e: unknown) {
-    console.error(`Error finding food: ${e}`);
-  }
-}
-
-export async function updatePost(c: Context) {
-  try {
-    const postId = parseInt(c.req.param("id"));
-    const body = await c.req.json();
-
-    const username =
-      typeof body["username"] === "string" ? body["username"] : "";
-    const name = typeof body["name"] === "string" ? body["name"] : "";
-    const address = typeof body["address"] === "string" ? body["address"] : "";
-    const phone = typeof body["phone"] === "string" ? body["phone"] : "";
-
-    await db
-      .update(post)
-      .set({
-        username: username,
-        name: name,
-        address: address,
-        phone: phone,
-      })
-      .where(eq(post.id, postId));
-
-    const updatedPost = await db.select().from(post).where(eq(post.id, postId));
-    return c.json(updatedPost);
-  } catch (e: unknown) {
-    console.error(`Error updating post: ${e}`);
+    console.error(`Error finding post: ${e}`);
+    return c.json({ success: false, message: "Internal Server Error" }, 500);
   }
 }
 
 // export async function updatePost(c: Context) {
 //   try {
-//     const userId = parseInt(c.req.param("id"));
-
+//     const postId = parseInt(c.req.param("id"));
 //     const body = await c.req.json();
 
 //     const username =
@@ -106,21 +81,50 @@ export async function updatePost(c: Context) {
 //     const address = typeof body["address"] === "string" ? body["address"] : "";
 //     const phone = typeof body["phone"] === "string" ? body["phone"] : "";
 
-//     const user = await prisma.post.update({
-//       where: { id: userId },
-//       data: {
+//     await db
+//       .update(post)
+//       .set({
 //         username: username,
 //         name: name,
 //         address: address,
 //         phone: phone,
-//       },
-//     });
+//       })
+//       .where(eq(post.id, postId));
 
-//     return c.json(user);
+//     const updatedPost = await db.select().from(post).where(eq(post.id, postId));
+//     return c.json(updatedPost);
 //   } catch (e: unknown) {
 //     console.error(`Error updating post: ${e}`);
 //   }
 // }
+
+export async function updatePost(c: Context) {
+  try {
+    const userId = parseInt(c.req.param("id"));
+
+    const body = await c.req.json();
+
+    const username =
+      typeof body["username"] === "string" ? body["username"] : "";
+    const name = typeof body["name"] === "string" ? body["name"] : "";
+    const address = typeof body["address"] === "string" ? body["address"] : "";
+    const phone = typeof body["phone"] === "string" ? body["phone"] : "";
+
+    const user = await prisma.post.update({
+      where: { id: userId },
+      data: {
+        username: username,
+        name: name,
+        address: address,
+        phone: phone,
+      },
+    });
+
+    return c.json(user);
+  } catch (e: unknown) {
+    console.error(`Error updating post: ${e}`);
+  }
+}
 
 export async function deletePost(c: Context) {
   try {

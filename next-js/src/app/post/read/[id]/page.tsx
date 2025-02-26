@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { fetcher } from "@/app/libs";
 import { use } from "react";
+import { GET } from "@/app/utils/queries/users/[id]/route";
+import { useQuery } from "@tanstack/react-query";
 import useSWR from "swr";
+import { fetcher } from "@/app/libs";
+import { PostModel } from "@/app/types";
 
 export default function Detail({
   params,
@@ -16,40 +20,29 @@ export default function Detail({
     error,
   } = useSWR(`/utils/queries/users/${resolvedParams.id}`, fetcher);
 
-  if (isLoading)
-    return (
-      <div>
-        <span>Loading...</span>
-      </div>
-    );
-  if (error)
-    return (
-      <div>
-        <span>Error fetching data</span>
-      </div>
-    );
-  if (!user)
-    return (
-      <div>
-        <span>No user found</span>
-      </div>
-    );
+  console.log("user data:", user);
 
   return (
     <div className="w-full">
-      <h2 className="text-center font-bold text-3xl py-3">{user.username}</h2>
-      <div className="w-full max-w-4xl m-auto border-[1px] p-3 border-gray-500 rounded-md">
-        <p>{user.username}</p>
-      </div>
-      <div className="w-full max-w-4xl m-auto border-[1px] p-3 border-gray-500 rounded-md">
-        <p>{user.name}</p>
-      </div>
-      <div className="w-full max-w-4xl m-auto border-[1px] p-3 border-gray-500 rounded-md">
-        <p>{user.address}</p>
-      </div>
-      <div className="w-full max-w-4xl m-auto border-[1px] p-3 border-gray-500 rounded-md">
-        <p>{user.phone}</p>
-      </div>
+      {user.map((userData: PostModel) => (
+        <div key={userData.id}>
+          <h2 className="text-center font-bold text-3xl py-3">
+            {userData.username}
+          </h2>
+          <div className="w-full max-w-4xl m-auto border-[1px] p-3 border-gray-500 rounded-md">
+            <p>{userData.name}</p>
+          </div>
+          <div className="w-full max-w-4xl m-auto border-[1px] p-3 border-gray-500 rounded-md">
+            <p>{userData.name}</p>
+          </div>
+          <div className="w-full max-w-4xl m-auto border-[1px] p-3 border-gray-500 rounded-md">
+            <p>{userData.address}</p>
+          </div>
+          <div className="w-full max-w-4xl m-auto border-[1px] p-3 border-gray-500 rounded-md">
+            <p>{userData.phone}</p>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
