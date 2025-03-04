@@ -6,7 +6,6 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: number } }
 ) {
-  console.log("REQUEST: ", request + "params: ", params);
   try {
     const token = await getAuthToken();
     const apiKey = await getApiKey(token);
@@ -80,7 +79,10 @@ export async function PUT(
   }
 }
 
-export async function DELETE(params: { id: number }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: number } }
+) {
   try {
     const token = await getAuthToken();
     const apiKey = await getApiKey(token);
@@ -88,7 +90,6 @@ export async function DELETE(params: { id: number }) {
     const res = await fetch(
       `http://localhost:3000/api/posts/data/${params.id}`,
       {
-        next: { revalidate: 10 },
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -96,9 +97,25 @@ export async function DELETE(params: { id: number }) {
         },
       }
     );
-    const data = await res.json();
+
+    const contentType = res.headers.get("content-type");
+    const textResponse = await res.text();
+    console.log("DELETE Response:", textResponse);
+
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error(`Unexpected response format: ${textResponse}`);
+    }
+
+    const data = JSON.parse(textResponse);
+
+    if (!res.ok) {
+      console.error("DELETE Error:", data);
+      throw new Error(`Error: ${res.status} ${res.statusText}`);
+    }
+
     return NextResponse.json(data);
   } catch (error: any) {
+    console.error("Failed to delete post:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

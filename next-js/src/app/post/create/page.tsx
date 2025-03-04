@@ -131,7 +131,9 @@ export default function UserCreate() {
               />
             </div>
             <div className="w-full py-2">
-              <Button type="submit">Submit</Button>
+              <Button type="submit" className="bg-black text-white">
+                Submit
+              </Button>
             </div>
           </form>
         </Form>

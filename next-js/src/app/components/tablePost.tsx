@@ -20,16 +20,29 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { mutate } from "swr";
 
-const DELETE = async (post: { id: number }) => {
-  const res = await fetch(`/utils/queries/users/${post.id}`, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-  });
+const DELETE = async (id: number) => {
+  try {
+    const res = await fetch(`/utils/queries/users/${id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
 
-  const content = await res.json();
+    const content = await res.json();
+    console.log("DELETE Response:", content);
 
-  if (content.success > 0) {
-    mutate(`/utils/queries/users`);
+    if (!res.ok) {
+      console.error("Server Error:", content);
+      throw new Error(`Error: ${res.status} ${res.statusText}`);
+    }
+
+    if (res.status === 200 && content.message.includes("Berhasil Dihapus")) {
+      console.log("User successfully deleted.");
+      mutate(`/utils/queries/users`);
+    } else {
+      console.error("Unexpected response format:", content);
+    }
+  } catch (error) {
+    console.error("Failed to delete post:", error);
   }
 };
 
@@ -47,17 +60,33 @@ export default function DataTable({ data }: { data: PostModel[] }) {
           <Button
             variant="destructive"
             size="sm"
-            onClick={() => DELETE(row.original)}
+            className="bg-red-500 text-white"
+            onClick={() => {
+              const confirmDelete = window.confirm(
+                "Apakah kamu yakin akan menghapus user ini?"
+              );
+              if (confirmDelete) {
+                DELETE(row.original.id);
+              }
+            }}
           >
             Delete
           </Button>
           <Link href={`/post/edit/${row.original.id}`}>
-            <Button variant="outline" size="sm">
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-yellow-500 text-white"
+            >
               Edit
             </Button>
           </Link>
           <Link href={`/post/read/${row.original.id}`}>
-            <Button variant="outline" size="sm">
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-blue-500 text-white"
+            >
               View
             </Button>
           </Link>
@@ -75,13 +104,13 @@ export default function DataTable({ data }: { data: PostModel[] }) {
   return (
     <div className="flex justify-center">
       <div className="rounded-md border">
-        <Table>
-          <TableHeader>
+        <Table className="border-collapse">
+          <TableHeader className="bg-gray-200">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="font-bold border-b">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -102,7 +131,7 @@ export default function DataTable({ data }: { data: PostModel[] }) {
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="border-b border-r">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

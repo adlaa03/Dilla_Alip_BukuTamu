@@ -2,12 +2,9 @@
 "use client";
 
 import { use } from "react";
-import { GET } from "@/app/utils/queries/users/[id]/route";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
-import useSWR from "swr";
-import { fetcher } from "@/app/libs";
-import { PostModel } from "@/app/types";
+import { Input } from "@/components/ui/input";
 
 export default function Detail({
   params,
@@ -15,15 +12,23 @@ export default function Detail({
   params: Promise<{ id: number }>;
 }) {
   const resolvedParams = use(params);
+  const { id } = resolvedParams;
+
   const {
     data: user,
     isLoading,
     error,
-  } = useSWR(`/utils/queries/users/${resolvedParams.id}`, fetcher);
+  } = useQuery({
+    queryKey: ["user", id],
+    queryFn: async () => {
+      const res = await fetch(`/utils/queries/users/${resolvedParams.id}`);
+      if (!res.ok) throw new Error("Failed to fetch user");
+      return res.json();
+    },
+  });
 
-  console.log("user data:", user);
+  console.log("data user: ", user);
 
-  // Menambahkan pemeriksaan untuk loading dan error
   if (isLoading) {
     return (
       <div>
@@ -40,7 +45,6 @@ export default function Detail({
     );
   }
 
-  // Memastikan user tidak undefined sebelum mengakses propertinya
   if (!user) {
     return (
       <div>
@@ -73,19 +77,3 @@ export default function Detail({
     </div>
   );
 }
-
-// <div className="w-full">
-//   <h2 className="text-center font-bold text-3xl py-3">View User</h2>
-//   <div className="w-full max-w-4xl m-auto border-[1px] p-3 border-gray-500 rounded-md">
-//     <p>{user.username}</p>
-//   </div>
-//   <div className="w-full max-w-4xl m-auto border-[1px] p-3 border-gray-500 rounded-md">
-//     <p>{user.name}</p>
-//   </div>
-//   <div className="w-full max-w-4xl m-auto border-[1px] p-3 border-gray-500 rounded-md">
-//     <p>{user.address}</p>
-//   </div>
-//   <div className="w-full max-w-4xl m-auto border-[1px] p-3 border-gray-500 rounded-md">
-//     <p>{user.phone}</p>
-//   </div>
-// </div>

@@ -4,9 +4,9 @@
 
 import React, { useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-import { fetcher } from "@/app/libs";
-import useSWR from "swr";
-import { QueryClient, useMutation } from "@tanstack/react-query";
+// import { fetcher } from "@/app/libs";
+// import useSWR from "swr";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,12 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 
+const fetchUser = async (id: number) => {
+  const res = await fetch(`/utils/queries/users/${id}`);
+  if (!res.ok) throw new Error("Failed to fetch user");
+  return res.json();
+};
+
 export default function PostEdit({
   params,
 }: {
@@ -26,11 +32,16 @@ export default function PostEdit({
 }) {
   const router = useRouter();
   const resolvedParams = use(params);
+  const userId = resolvedParams.id;
   const {
     data: user,
     isLoading,
     error,
-  } = useSWR(`/utils/queries/users/${resolvedParams.id}`, fetcher);
+  } = useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => fetchUser(userId),
+    enabled: !!userId,
+  });
 
   console.log("data :", user);
   const form = useForm({
@@ -60,7 +71,7 @@ export default function PostEdit({
       address: string;
       phone: string;
     }) => {
-      const res = await fetch(`/utils/queries/users/${resolvedParams.id}`, {
+      const res = await fetch(`/utils/queries/users/${userId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -100,12 +111,16 @@ export default function PostEdit({
               <FormField
                 control={form.control}
                 name="username"
-                render={({ field }) => (
+                rules={{ required: "harap isi semua bidang" }}
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter username" {...field} />
                     </FormControl>
+                    {fieldState.error && (
+                      <p className="text-red-500">{fieldState.error.message}</p>
+                    )}
                   </FormItem>
                 )}
               />
@@ -115,12 +130,16 @@ export default function PostEdit({
               <FormField
                 control={form.control}
                 name="name"
-                render={({ field }) => (
+                rules={{ required: "harap isi semua bidang" }}
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter name" {...field} />
                     </FormControl>
+                    {fieldState.error && (
+                      <p className="text-red-500">{fieldState.error.message}</p>
+                    )}
                   </FormItem>
                 )}
               />
@@ -130,12 +149,16 @@ export default function PostEdit({
               <FormField
                 control={form.control}
                 name="address"
-                render={({ field }) => (
+                rules={{ required: "harap isi semua bidang" }}
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel>Address</FormLabel>
                     <FormControl>
                       <Textarea placeholder="Enter address" {...field} />
                     </FormControl>
+                    {fieldState.error && (
+                      <p className="text-red-500">{fieldState.error.message}</p>
+                    )}
                   </FormItem>
                 )}
               />
@@ -145,19 +168,25 @@ export default function PostEdit({
               <FormField
                 control={form.control}
                 name="phone"
-                render={({ field }) => (
+                rules={{ required: "harap isi semua bidang" }}
+                render={({ field, fieldState }) => (
                   <FormItem>
                     <FormLabel>Phone</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter phone number" {...field} />
                     </FormControl>
+                    {fieldState.error && (
+                      <p className="text-red-500">{fieldState.error.message}</p>
+                    )}
                   </FormItem>
                 )}
               />
             </div>
 
             <div className="w-full py-2">
-              <Button type="submit">Update</Button>
+              <Button type="submit" className="bg-black text-white">
+                Update
+              </Button>
             </div>
           </form>
         </Form>
