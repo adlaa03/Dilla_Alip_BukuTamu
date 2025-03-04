@@ -19,14 +19,14 @@ export default function Post(params: PostModel) {
         </span>
 
         <Link
-          href={`/post/edit/${params.id}`}
+          href={`/post/${params.id}/edit`}
           className="bg-yellow-500 p-2 inline-block ml-3 text-white text-sm"
         >
           Edit
         </Link>
 
         <Link
-          href={`/post/read/${params.id}`}
+          href={`/post/${params.id}`}
           className="bg-yellow-500 p-2 inline-block ml-3 text-white text-sm"
         >
           View

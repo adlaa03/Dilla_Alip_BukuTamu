@@ -72,7 +72,7 @@ export default function DataTable({ data }: { data: PostModel[] }) {
           >
             Delete
           </Button>
-          <Link href={`/post/edit/${row.original.id}`}>
+          <Link href={`/post/${row.original.id}/edit`}>
             <Button
               variant="outline"
               size="sm"
@@ -81,7 +81,7 @@ export default function DataTable({ data }: { data: PostModel[] }) {
               Edit
             </Button>
           </Link>
-          <Link href={`/post/read/${row.original.id}`}>
+          <Link href={`/post/${row.original.id}`}>
             <Button
               variant="outline"
               size="sm"

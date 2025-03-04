@@ -111,16 +111,12 @@ export default function PostEdit({
               <FormField
                 control={form.control}
                 name="username"
-                rules={{ required: "harap isi semua bidang" }}
-                render={({ field, fieldState }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter username" {...field} />
+                      <Input placeholder="Enter username" {...field} required />
                     </FormControl>
-                    {fieldState.error && (
-                      <p className="text-red-500">{fieldState.error.message}</p>
-                    )}
                   </FormItem>
                 )}
               />
@@ -130,16 +126,12 @@ export default function PostEdit({
               <FormField
                 control={form.control}
                 name="name"
-                rules={{ required: "harap isi semua bidang" }}
-                render={({ field, fieldState }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter name" {...field} />
+                      <Input placeholder="Enter name" {...field} required />
                     </FormControl>
-                    {fieldState.error && (
-                      <p className="text-red-500">{fieldState.error.message}</p>
-                    )}
                   </FormItem>
                 )}
               />
@@ -149,16 +141,16 @@ export default function PostEdit({
               <FormField
                 control={form.control}
                 name="address"
-                rules={{ required: "harap isi semua bidang" }}
-                render={({ field, fieldState }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Address</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Enter address" {...field} />
+                      <Textarea
+                        placeholder="Enter address"
+                        {...field}
+                        required
+                      />
                     </FormControl>
-                    {fieldState.error && (
-                      <p className="text-red-500">{fieldState.error.message}</p>
-                    )}
                   </FormItem>
                 )}
               />
@@ -168,16 +160,16 @@ export default function PostEdit({
               <FormField
                 control={form.control}
                 name="phone"
-                rules={{ required: "harap isi semua bidang" }}
-                render={({ field, fieldState }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Phone</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter phone number" {...field} />
+                      <Input
+                        placeholder="Enter phone number"
+                        {...field}
+                        required
+                      />
                     </FormControl>
-                    {fieldState.error && (
-                      <p className="text-red-500">{fieldState.error.message}</p>
-                    )}
                   </FormItem>
                 )}
               />
