@@ -7,17 +7,21 @@ import { useRouter } from "next/navigation";
 // import { fetcher } from "@/app/libs";
 // import useSWR from "swr";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+// import { Input } from "@/components/ui/input";
+// import { Textarea } from "@/components/ui/textarea";
+// import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
+// import {
+//   Form,
+//   FormControl,
+//   FormField,
+//   FormItem,
+//   FormLabel,
+// } from "@/components/ui/form";
+import { userDefaultValues } from "@/app/types/defaultValues";
+import { z } from "zod";
+import { userSchema } from "@/app/types/userSchema";
+import Post from "@/app/components/Post";
 
 const fetchUser = async (id: number) => {
   const res = await fetch(`/utils/queries/users/${id}`);
@@ -44,14 +48,15 @@ export default function PostEdit({
   });
 
   console.log("data :", user);
-  const form = useForm({
-    defaultValues: {
-      username: "",
-      name: "",
-      address: "",
-      phone: "",
-    },
-  });
+  // const form = useForm({
+  //   defaultValues: {
+  //     username: "",
+  //     name: "",
+  //     address: "",
+  //     phone: "",
+  //   },
+  // });
+  const form = useForm({ defaultValues: userDefaultValues });
 
   useEffect(() => {
     if (user) {
@@ -92,16 +97,19 @@ export default function PostEdit({
     },
   });
 
-  const submit = (data: any) => {
-    mutation.mutate(data);
-  };
+  // const submit = (data: any) => {
+  //   mutation.mutate(data);
+  // };
+  function submit(values: z.infer<typeof userSchema>) {
+    mutation.mutate(values);
+  }
 
   if (!user) return <div>User not found.</div>;
 
   return (
     <div className="container w-full py-10">
       <div className="flex justify-center">
-        <Form {...form}>
+        {/* <Form {...form}>
           <form onSubmit={form.handleSubmit(submit)} className="w-full mx-32">
             <div className="text-center">
               <span className="font-bold py-2 block text-4xl">Edit User</span>
@@ -181,7 +189,14 @@ export default function PostEdit({
               </Button>
             </div>
           </form>
-        </Form>
+        </Form> */}
+        <Post
+          form={form}
+          onSubmit={submit}
+          titleText="Update User"
+          buttonText="Update"
+          required={false}
+        ></Post>
       </div>
     </div>
   );

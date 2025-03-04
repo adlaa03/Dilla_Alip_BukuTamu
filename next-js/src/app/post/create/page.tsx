@@ -5,28 +5,33 @@
 import { useRouter } from "next/navigation";
 import { QueryClient, useMutation } from "@tanstack/react-query";
 import { POST } from "@/app/utils/queries/users/route";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
+// import {
+//   Form,
+//   FormControl,
+//   FormField,
+//   FormItem,
+//   FormLabel,
+// } from "@/components/ui/form";
+// import { Input } from "@/components/ui/input";
+// import { Textarea } from "@/components/ui/textarea";
+// import { Button } from "@/components/ui/button";
+import { userSchema } from "@/app/types/userSchema";
+import { z } from "zod";
+import { userDefaultValues } from "@/app/types/defaultValues";
+import Post from "@/app/components/Post";
 
 export default function UserCreate() {
   const queryClient = new QueryClient();
   const router = useRouter();
   const form = useForm({
-    defaultValues: {
-      username: "",
-      name: "",
-      address: "",
-      phone: "",
-    },
+    // defaultValues: {
+    //   username: "",
+    //   name: "",
+    //   address: "",
+    //   phone: "",
+    // },
+    defaultValues: userDefaultValues,
   });
 
   const mutation = useMutation({
@@ -50,14 +55,17 @@ export default function UserCreate() {
     },
   });
 
-  const submit = (data: any) => {
-    mutation.mutate(data);
-  };
+  // const submit = (data: any) => {
+  //   mutation.mutate(data);
+  // };
+  function submit(values: z.infer<typeof userSchema>) {
+    mutation.mutate(values);
+  }
 
   return (
     <div className="container w-full py-10">
       <div className="flex justify-center">
-        <Form {...form}>
+        {/* <Form {...form}>
           <form onSubmit={form.handleSubmit(submit)} className="w-full mx-32">
             <div className="text-center">
               <span className="font-bold py-2 block text-4xl">Add User</span>
@@ -136,7 +144,14 @@ export default function UserCreate() {
               </Button>
             </div>
           </form>
-        </Form>
+        </Form> */}
+        <Post
+          form={form}
+          onSubmit={submit}
+          titleText="Add User"
+          buttonText="Submit"
+          required={true}
+        ></Post>
       </div>
     </div>
   );
