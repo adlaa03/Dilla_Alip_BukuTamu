@@ -2,10 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useRouter } from "next/navigation";
-import { QueryClient, useMutation } from "@tanstack/react-query";
-import { POST } from "@/app/utils/queries/users/route";
-import { useForm } from "react-hook-form";
+import React from "react";
+// import { useRouter } from "next/navigation";
+// import { QueryClient, useMutation } from "@tanstack/react-query";
+// import { POST } from "@/app/utils/queries/users/route";
+// import { useForm } from "react-hook-form";
 // import {
 //   Form,
 //   FormControl,
@@ -16,51 +17,51 @@ import { useForm } from "react-hook-form";
 // import { Input } from "@/components/ui/input";
 // import { Textarea } from "@/components/ui/textarea";
 // import { Button } from "@/components/ui/button";
-import { userSchema } from "@/app/types/userSchema";
-import { z } from "zod";
-import { userDefaultValues } from "@/app/types/defaultValues";
+// import { userSchema } from "@/app/types/userSchema";
+// import { z } from "zod";
+// import { userDefaultValues } from "@/app/types/defaultValues";
 import Post from "@/app/components/Post";
 
 export default function UserCreate() {
-  const queryClient = new QueryClient();
-  const router = useRouter();
-  const form = useForm({
-    // defaultValues: {
-    //   username: "",
-    //   name: "",
-    //   address: "",
-    //   phone: "",
-    // },
-    defaultValues: userDefaultValues,
-  });
+  // const queryClient = new QueryClient();
+  // const router = useRouter();
+  // const form = useForm({
+  //   // defaultValues: {
+  //   //   username: "",
+  //   //   name: "",
+  //   //   address: "",
+  //   //   phone: "",
+  //   // },
+  //   defaultValues: userDefaultValues,
+  // });
 
-  const mutation = useMutation({
-    mutationFn: async (userData: {
-      username: string;
-      name: string;
-      address: string;
-      phone: string;
-    }) => {
-      const response = await fetch("/utils/queries/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
-      router.push("/post");
-    },
-  });
+  // const mutation = useMutation({
+  //   mutationFn: async (userData: {
+  //     username: string;
+  //     name: string;
+  //     address: string;
+  //     phone: string;
+  //   }) => {
+  //     const response = await fetch("/utils/queries/users", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(userData),
+  //     });
+  //   },
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["todos"] });
+  //     router.push("/post");
+  //   },
+  // });
 
-  // const submit = (data: any) => {
-  //   mutation.mutate(data);
-  // };
-  function submit(values: z.infer<typeof userSchema>) {
-    mutation.mutate(values);
-  }
+  // // const submit = (data: any) => {
+  // //   mutation.mutate(data);
+  // // };
+  // function submit(values: z.infer<typeof userSchema>) {
+  //   mutation.mutate(values);
+  // }
 
   return (
     <div className="container w-full py-10">
@@ -145,13 +146,7 @@ export default function UserCreate() {
             </div>
           </form>
         </Form> */}
-        <Post
-          form={form}
-          onSubmit={submit}
-          titleText="Add User"
-          buttonText="Submit"
-          required={true}
-        ></Post>
+        <Post titleText="Add User" buttonText="Submit" required={true}></Post>
       </div>
     </div>
   );

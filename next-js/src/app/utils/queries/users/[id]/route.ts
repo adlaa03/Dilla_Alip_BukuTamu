@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { PostAddModel } from "@/app/types";
 import { getApiKey, getAuthToken } from "@/app/utils/authHelper";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -52,14 +54,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: number } }
-) {
+export async function PUT(params: { id: number }, userData: PostAddModel) {
   try {
     const token = await getAuthToken();
     const apiKey = await getApiKey(token);
-    const body = await request.json();
+    // const body = await request.json();
 
     const res = await fetch(
       `http://localhost:3000/api/posts/data/${params.id}`,
@@ -69,7 +68,7 @@ export async function PUT(
           Authorization: `Bearer ${token}`,
           "api-key-dilla": apiKey,
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(userData),
       }
     );
     const data = await res.json();
