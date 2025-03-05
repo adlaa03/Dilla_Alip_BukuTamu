@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 import { getApiKey, getAuthToken } from "@/app/utils/authHelper";
-import { PostAddModel } from "@/app/types";
 
 export async function GET() {
   try {
@@ -24,11 +22,11 @@ export async function GET() {
   }
 }
 
-export async function POST(userData: PostAddModel) {
+export async function POST(request: NextRequest) {
   try {
     const token = await getAuthToken();
     const apiKey = await getApiKey(token);
-    // const body = await request.json();
+    const body = await request.json();
 
     const res = await fetch("http://localhost:3000/api/posts/data", {
       method: "POST",
@@ -37,7 +35,7 @@ export async function POST(userData: PostAddModel) {
         "api-key-dilla": apiKey,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(userData),
+      body: JSON.stringify(body),
     });
 
     const data = await res.json();

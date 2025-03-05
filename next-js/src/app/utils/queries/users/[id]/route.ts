@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { PostAddModel } from "@/app/types";
+// import { PostAddModel } from "@/app/types";
 import { getApiKey, getAuthToken } from "@/app/utils/authHelper";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -54,23 +53,25 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function PUT(params: { id: number }, userData: PostAddModel) {
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
+    const { id } = params; // ⬅️ Pastikan ini ada di dalam async function
+    const userData = await request.json();
     const token = await getAuthToken();
     const apiKey = await getApiKey(token);
     // const body = await request.json();
 
-    const res = await fetch(
-      `http://localhost:3000/api/posts/data/${params.id}`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "api-key-dilla": apiKey,
-        },
-        body: JSON.stringify(userData),
-      }
-    );
+    const res = await fetch(`http://localhost:3000/api/posts/data/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "api-key-dilla": apiKey,
+      },
+      body: JSON.stringify(userData),
+    });
     const data = await res.json();
     return NextResponse.json(data);
   } catch (error: any) {

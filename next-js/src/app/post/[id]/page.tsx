@@ -55,20 +55,22 @@ export default function Detail({
 
   return (
     <div className="w-full flex flex-col items-center space-y-4 py-6">
-      <h2 className="text-center font-bold text-3xl">{user.username}</h2>
-      <Card className="w-full max-w-4xl">
+      <h2 className="text-center font-bold text-3xl text-[#3C2A21]">
+        {user.username}
+      </h2>
+      <Card className="w-full max-w-4xl text-[#3C2A21] border-2 border-[#3C2A21] focus:border-[#3C2A21]">
         <CardContent>
           <b>Name</b>
           <p>{user.name}</p>
         </CardContent>
       </Card>
-      <Card className="w-full max-w-4xl">
+      <Card className="w-full max-w-4xl text-[#3C2A21] border-2 border-[#3C2A21] focus:border-[#3C2A21]">
         <CardContent>
           <b>Address</b>
           <p>{user.address}</p>
         </CardContent>
       </Card>
-      <Card className="w-full max-w-4xl">
+      <Card className="w-full max-w-4xl text-[#3C2A21] border-2 border-[#3C2A21] focus:border-[#3C2A21]">
         <CardContent>
           <b>Phone</b>
           <p>{user.phone}</p>

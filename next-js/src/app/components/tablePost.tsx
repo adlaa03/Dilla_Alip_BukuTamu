@@ -19,6 +19,7 @@ import { PostModel } from "../types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { mutate } from "swr";
+import Swal from "sweetalert2";
 
 const DELETE = async (id: number) => {
   try {
@@ -38,11 +39,14 @@ const DELETE = async (id: number) => {
     if (res.status === 200 && content.message.includes("Berhasil Dihapus")) {
       console.log("User successfully deleted.");
       mutate(`/utils/queries/users`);
+      return true;
     } else {
       console.error("Unexpected response format:", content);
+      return false;
     }
   } catch (error) {
     console.error("Failed to delete post:", error);
+    return false;
   }
 };
 
@@ -56,18 +60,35 @@ export default function DataTable({ data }: { data: PostModel[] }) {
     {
       header: "Actions",
       cell: ({ row }) => (
-        <TableCell className="flex gap-2">
+        <div className="flex justify-center items-center gap-2">
           <Button
             variant="destructive"
             size="sm"
             className="bg-red-500 text-white"
             onClick={() => {
-              const confirmDelete = window.confirm(
-                "Apakah kamu yakin akan menghapus user ini?"
-              );
-              if (confirmDelete) {
-                DELETE(row.original.id);
-              }
+              Swal.fire({
+                title: "Apakah Anda Yakin?",
+                text: "Data yang dihapus tidak dapat dikembalikan.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Ya, hapus!",
+                cancelButtonText: "Batal",
+              }).then(async (result) => {
+                if (result.isConfirmed) {
+                  const success = await DELETE(row.original.id);
+                  if (success) {
+                    Swal.fire("Terhapus!", "Data berhasil dihapus.", "success");
+                  } else {
+                    Swal.fire(
+                      "Gagal!",
+                      "Terjadi kesalahan saat menghapus data.",
+                      "error"
+                    );
+                  }
+                }
+              });
             }}
           >
             Delete
@@ -90,7 +111,7 @@ export default function DataTable({ data }: { data: PostModel[] }) {
               View
             </Button>
           </Link>
-        </TableCell>
+        </div>
       ),
     },
   ];
@@ -102,15 +123,21 @@ export default function DataTable({ data }: { data: PostModel[] }) {
   });
 
   return (
-    <div className="flex justify-center">
-      <div className="rounded-md border">
-        <Table className="border-collapse">
-          <TableHeader className="bg-gray-200">
+    <div className="w-full overflow-x-auto">
+      <div
+        className="border border-[#3C2A21] w-full overflow-hidden"
+        style={{ borderColor: "#3C2A21" }}
+      >
+        <Table className="w-full border-collapse">
+          <TableHeader className="bg-[#D5CEA3] border-b-2 border-[#3C2A21]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="font-bold border-b">
+                    <TableHead
+                      key={header.id}
+                      className="font-bold border-b text-center border border-[#3C2A21]"
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -129,9 +156,13 @@ export default function DataTable({ data }: { data: PostModel[] }) {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="border border-[#3C2A21]"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="border-b border-r">
+                    <TableCell
+                      key={cell.id}
+                      className="border border-[#3C2A21]"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -141,7 +172,7 @@ export default function DataTable({ data }: { data: PostModel[] }) {
                 </TableRow>
               ))
             ) : (
-              <TableRow>
+              <TableRow style={{ borderColor: "#3C2A21" }}>
                 <TableCell
                   colSpan={columns.length}
                   className="h-24 text-center"

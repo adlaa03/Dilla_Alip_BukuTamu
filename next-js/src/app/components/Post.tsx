@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // import React from "react";
 // import Link from "next/link";
 // import { PostModel } from "../types";
@@ -58,6 +59,7 @@ import { userForm, userSchema } from "../types/userSchema";
 import { userDefaultValues } from "../types/defaultValues";
 import { QueryClient, useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 import { PUT } from "../utils/queries/users/[id]/route";
 import { POST } from "../utils/queries/users/route";
 
@@ -79,16 +81,59 @@ export default function UserForm({ user, titleText, buttonText }: FormProps) {
   });
 
   const mutation = useMutation({
-    mutationFn: (data: userForm) => {
+    mutationFn: async (data: userForm) => {
       if (user) {
-        return PUT({ id: user.id }, data);
+        // UPDATE
+        const res = await fetch(`/utils/queries/users/${user.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`Failed to update user: ${errorText}`);
+        }
+        return res.json();
       } else {
-        return POST(data);
+        // CREATE
+        const res = await fetch("/utils/queries/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to create user");
+        }
+        return res.json();
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
-      router.push("/users");
+      Swal.fire({
+        title: user
+          ? "Data Berhasil Diperbarui!"
+          : "Data Berhasil Ditambahkan!",
+        text: user
+          ? "Informasi pengguna telah diperbarui."
+          : "Pengguna baru telah ditambahkan.",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "OK",
+      }).then(() => {
+        router.push("/post");
+      });
+    },
+    onError: (error) => {
+      Swal.fire({
+        title: "Gagal!",
+        text: error.message,
+        icon: "error",
+        confirmButtonColor: "#d33",
+        confirmButtonText: "OK",
+      });
     },
   });
 
@@ -99,7 +144,7 @@ export default function UserForm({ user, titleText, buttonText }: FormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(submit)} className="w-full mx-32">
-        <div className="text-center">
+        <div className="text-[#1A120B] text-center">
           <span className="font-bold py-2 block text-4xl">{titleText}</span>
         </div>
 
@@ -110,11 +155,17 @@ export default function UserForm({ user, titleText, buttonText }: FormProps) {
             rules={{ required: true }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel className="text-[#1A120B] font-bold">
+                  Username
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter username" {...field} />
+                  <Input
+                    placeholder="Enter username"
+                    {...field}
+                    className="border-2 border-[#3C2A21] focus:border-[#3C2A21] rounded-md p-2 placeholder-[#3C2A21]"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
@@ -127,11 +178,15 @@ export default function UserForm({ user, titleText, buttonText }: FormProps) {
             rules={{ required: true }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel className="text-[#1A120B] font-bold">Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter name" {...field} />
+                  <Input
+                    placeholder="Enter name"
+                    {...field}
+                    className="border-2 border-[#3C2A21] focus:border-[#3C2A21] rounded-md p-2 placeholder-[#3C2A21]"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
@@ -144,11 +199,17 @@ export default function UserForm({ user, titleText, buttonText }: FormProps) {
             rules={{ required: true }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Address</FormLabel>
+                <FormLabel className="text-[#1A120B] font-bold">
+                  Address
+                </FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Enter address" {...field} />
+                  <Textarea
+                    placeholder="Enter address"
+                    {...field}
+                    className="border-2 border-[#3C2A21] focus:border-[#3C2A21] rounded-md p-2 placeholder-[#3C2A21]"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
@@ -161,17 +222,28 @@ export default function UserForm({ user, titleText, buttonText }: FormProps) {
             rules={{ required: true }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone</FormLabel>
+                <FormLabel className="text-[#1A120B] font-bold">
+                  Phone
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter phone number" {...field} />
+                  <Input
+                    placeholder="Enter phone number"
+                    {...field}
+                    className="border-2 border-[#3C2A21] focus:border-[#3C2A21] rounded-md p-2 placeholder-[#3C2A21]"
+                  />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-500" />
               </FormItem>
             )}
           />
         </div>
         <div className="w-full py-2">
-          <Button type="submit">{buttonText}</Button>
+          <Button
+            type="submit"
+            className="bg-[#3C2A21] text-white hover:bg-[#2E1F18] transition-all"
+          >
+            {buttonText}
+          </Button>
         </div>
       </form>
     </Form>
