@@ -183,6 +183,48 @@ const createUserRoute = createRoute({
 
 postRouter.openapi(createUserRoute, createPost);
 
+const updateUserRoute = createRoute({
+  method: "put",
+  path: "/api/posts/data/{id}",
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      schema: z.number(),
+    },
+  ],
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: postSchema.omit({ id: true }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: "Person updated successfully",
+      content: {
+        "application/json": {
+          schema: postSchema,
+        },
+      },
+    },
+  },
+  500: {
+    description: "Internal server error",
+    content: {
+      "application/json": {
+        schema: z.object({ error: z.string() }),
+      },
+    },
+  },
+});
+
+postRouter.openapi(updateUserRoute, updatePost);
+
 postRouter.doc("/doc", {
   openapi: "3.0.0",
   info: {
