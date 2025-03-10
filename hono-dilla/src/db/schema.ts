@@ -15,7 +15,7 @@ export type InsertPost = typeof post.$inferInsert;
 import { z } from "zod";
 
 export const postSchema = z.object({
-  id: z.number(),
+  id: z.number().optional(),
   username: z.string().min(3),
   name: z.string().min(3),
   address: z.string().min(3),
