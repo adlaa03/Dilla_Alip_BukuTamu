@@ -156,6 +156,11 @@ export default function UserForm({ user, titleText, buttonText }: FormProps) {
   // });
 
   const onSubmit = form.handleSubmit((data) => {
+    if (!data.phone.startsWith("08")) {
+      alert("Nomor telepon harus dimulai dengan 08!");
+      return;
+    }
+
     const isConfirmed = window.confirm(
       user
         ? "Apakah Anda yakin ingin memperbarui data ini?"

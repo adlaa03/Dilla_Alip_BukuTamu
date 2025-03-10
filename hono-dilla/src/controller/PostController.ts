@@ -27,6 +27,14 @@ export async function createPost(c: Context) {
     const address = typeof body["address"] === "string" ? body["address"] : "";
     const phone = typeof body["phone"] === "string" ? body["phone"] : "";
 
+    //HonoApi
+    if (!body.name || !body.address || !body.phone) {
+      return c.json(
+        { error: "All fields are required: name, address, phone" },
+        400
+      );
+    }
+
     const data = await db.insert(post).values({
       username: username,
       name: name,
@@ -53,6 +61,7 @@ export async function getPostById(c: Context) {
     const data = await db.select().from(post).where(eq(post.id, postId));
     console.log("Post data:", data);
 
+    //HonoApi
     if (data.length === 0) {
       return c.json(
         {
@@ -62,6 +71,7 @@ export async function getPostById(c: Context) {
         404
       );
     }
+    //
 
     return c.json(data[0]);
   } catch (e: unknown) {
@@ -110,6 +120,14 @@ export async function updatePost(c: Context) {
     const address = typeof body["address"] === "string" ? body["address"] : "";
     const phone = typeof body["phone"] === "string" ? body["phone"] : "";
 
+    if (!body.name || !body.address || !body.phone) {
+      return c.json(
+        { error: "All fields are required: name, address, phone" },
+        400
+      );
+    }
+    //
+
     const user = await prisma.post.update({
       where: { id: userId },
       data: {
@@ -129,6 +147,22 @@ export async function updatePost(c: Context) {
 export async function deletePost(c: Context) {
   try {
     const postId = parseInt(c.req.param("id"));
+
+    //HonoApi
+    const person = await prisma.post.findUnique({
+      where: { id: postId },
+    });
+
+    if (!person) {
+      return c.json(
+        {
+          statusCode: 404,
+          message: "Person not found",
+        },
+        404
+      );
+    }
+    //
 
     await db.delete(post).where(eq(post.id, postId));
 

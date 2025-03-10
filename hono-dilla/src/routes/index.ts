@@ -19,6 +19,11 @@ import { apiKeyAuth } from "../middleware/auth";
 import { jwt } from "hono/jwt";
 import type { JwtVariables } from "hono/jwt";
 import { loginUser } from "../controller/authController";
+import { postSchema } from "../db/schema";
+
+import { zValidator } from "@hono/zod-validator";
+import { OpenAPIHono } from "@hono/zod-openapi";
+// import { swaggerUI } from "@hono/swagger-ui";
 
 export const postRouter = new Hono<{ Variables: JwtVariables }>();
 
@@ -45,13 +50,17 @@ postRouter.use("/data/*", apiKeyAuth);
 postRouter.get("/data", (c) => getPost(c));
 
 //routes posts create
-postRouter.post("/data", (c) => createPost(c));
+// postRouter.post("/data", (c) => createPost(c));
+postRouter.post("/data", zValidator("json", postSchema), (c) => createPost(c));
 
 //routes posts detail
 postRouter.get("/data/:id", (c) => getPostById(c));
 
 //route post update
-postRouter.put("/data/:id", (c) => updatePost(c));
+// postRouter.put("/data/:id", (c) => updatePost(c));
+postRouter.put("/data/:id", zValidator("json", postSchema), (c) =>
+  updatePost(c)
+);
 
 //route post delete
 postRouter.delete("/data/:id", (c) => deletePost(c));
