@@ -1,10 +1,9 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-
-import * as mutations from "../../queries/users/[id]/route";
-// import * as queries from "../../queries/users/route";
+import * as mutations from "../../queries/users/mutation";
+import * as queries from "../../queries/users/query";
 import { userForm } from "@/app/types/userSchema";
 import { useRouter } from "next/navigation";
-import { GetAllPost } from "../../queries/users/route";
+import { GetAllPost } from "../../queries/users/query";
 
 export const useAllPost = () => {
   const router = useRouter();
@@ -76,21 +75,28 @@ export const usePost = () => {
   });
 };
 
-export const useViewpost = (idUser: number) => {
-  // const router = useRouter();
+// export const useViewpost = (idUser: number) => {
+//   // const router = useRouter();
 
+//   return useQuery({
+//     queryKey: ["getById", idUser],
+//     queryFn: async () => {
+//       try {
+//         const result = mutations.ViewPost({
+//           id: idUser,
+//         });
+//         return result;
+//       } catch (error) {
+//         console.log(error);
+//       }
+//     },
+//   });
+// };
+
+export const useViewpost = (userId: number) => {
   return useQuery({
-    queryKey: ["getById", idUser],
-    queryFn: async () => {
-      try {
-        const result = mutations.ViewPost({
-          id: idUser,
-        });
-        return result;
-      } catch (error) {
-        console.log(error);
-      }
-    },
+    queryKey: ["user", userId],
+    queryFn: () => queries.ViewPost({ id: userId }),
   });
 };
 

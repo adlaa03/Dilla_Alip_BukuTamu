@@ -4,7 +4,7 @@
 import Post from "@/app/components/Post";
 import React, { use } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { UpdatePost } from "@/app/utils/queries/users/[id]/route";
+import { UpdatePost } from "@/app/utils/queries/users/mutation";
 import { useViewpost } from "@/app/utils/hooks/post";
 
 export default function PostEdit({

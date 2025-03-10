@@ -142,70 +142,70 @@ export default function UserForm({ user, titleText, buttonText }: FormProps) {
   const mutationUpdate = useUpdatepost();
   const mutationPost = usePost();
 
-  // const onSubmit = form.handleSubmit((data) => {
-  //   if (user) {
-  //     mutationUpdate.mutate({
-  //       idUser: user?.id || 0,
-  //       body: data,
-  //     });
-  //   } else {
-  //     mutationPost.mutate({
-  //       body: data,
-  //     });
-  //   }
-  // });
-
   const onSubmit = form.handleSubmit((data) => {
-    if (!data.phone.startsWith("08")) {
-      alert("Nomor telepon harus dimulai dengan 08!");
-      return;
-    }
-
-    const isConfirmed = window.confirm(
-      user
-        ? "Apakah Anda yakin ingin memperbarui data ini?"
-        : "Apakah Anda yakin ingin menambahkan data ini?"
-    );
-
-    if (!isConfirmed) return;
-
     if (user) {
-      mutationUpdate.mutate(
-        {
-          idUser: user?.id || 0,
-          body: data,
-        },
-        {
-          onSuccess: () => {
-            alert(
-              "Data Berhasil Diperbarui!\n\nInformasi pengguna telah diperbarui."
-            );
-            router.push("/post");
-          },
-          onError: (error) => {
-            alert("Gagal!\n\n" + (error?.message || "Terjadi kesalahan"));
-          },
-        }
-      );
+      mutationUpdate.mutate({
+        idUser: user?.id || 0,
+        body: data,
+      });
     } else {
-      mutationPost.mutate(
-        {
-          body: data,
-        },
-        {
-          onSuccess: () => {
-            alert(
-              "Data Berhasil Ditambahkan!\n\nPengguna baru telah ditambahkan."
-            );
-            router.push("/post");
-          },
-          onError: (error) => {
-            alert("Gagal!\n\n" + (error?.message || "Terjadi kesalahan"));
-          },
-        }
-      );
+      mutationPost.mutate({
+        body: data,
+      });
     }
   });
+
+  // const onSubmit = form.handleSubmit((data) => {
+  //   if (!data.phone.startsWith("08")) {
+  //     alert("Nomor telepon harus dimulai dengan 08!");
+  //     return;
+  //   }
+
+  //   const isConfirmed = window.confirm(
+  //     user
+  //       ? "Apakah Anda yakin ingin memperbarui data ini?"
+  //       : "Apakah Anda yakin ingin menambahkan data ini?"
+  //   );
+
+  //   if (!isConfirmed) return;
+
+  //   if (user) {
+  //     mutationUpdate.mutate(
+  //       {
+  //         idUser: user?.id || 0,
+  //         body: data,
+  //       },
+  //       {
+  //         onSuccess: () => {
+  //           alert(
+  //             "Data Berhasil Diperbarui!\n\nInformasi pengguna telah diperbarui."
+  //           );
+  //           router.push("/post");
+  //         },
+  //         onError: (error) => {
+  //           alert("Gagal!\n\n" + (error?.message || "Terjadi kesalahan"));
+  //         },
+  //       }
+  //     );
+  //   } else {
+  //     mutationPost.mutate(
+  //       {
+  //         body: data,
+  //       },
+  //       {
+  //         onSuccess: () => {
+  //           alert(
+  //             "Data Berhasil Ditambahkan!\n\nPengguna baru telah ditambahkan."
+  //           );
+  //           router.push("/post");
+  //         },
+  //         onError: (error) => {
+  //           alert("Gagal!\n\n" + (error?.message || "Terjadi kesalahan"));
+  //         },
+  //       }
+  //     );
+  //   }
+  // });
 
   return (
     <Form {...form}>
