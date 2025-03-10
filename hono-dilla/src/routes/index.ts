@@ -22,12 +22,14 @@ import { loginUser } from "../controller/authController";
 import { postSchema } from "../db/schema";
 
 import { zValidator } from "@hono/zod-validator";
-import { OpenAPIHono } from "@hono/zod-openapi";
-// import { swaggerUI } from "@hono/swagger-ui";
+import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+import { swaggerUI } from "@hono/swagger-ui";
+import { get } from "node:http";
 
-export const postRouter = new Hono<{ Variables: JwtVariables }>();
+// export const postRouter = new Hono<{ Variables: JwtVariables }>();
+export const postRouter = new OpenAPIHono();
 
-const SECRET_KEY: any = process.env.KEY;
+// const SECRET_KEY: any = process.env.KEY;
 
 postRouter.post("/login", loginUser);
 
@@ -43,9 +45,9 @@ postRouter.get("/", async (c) => {
   }
 });
 
-postRouter.use("/data/*", jwt({ secret: SECRET_KEY }));
+// postRouter.use("/data/*", jwt({ secret: SECRET_KEY }));
 
-postRouter.use("/data/*", apiKeyAuth);
+// postRouter.use("/data/*", apiKeyAuth);
 //routes posts index
 postRouter.get("/data", (c) => getPost(c));
 
@@ -64,3 +66,64 @@ postRouter.put("/data/:id", zValidator("json", postSchema), (c) =>
 
 //route post delete
 postRouter.delete("/data/:id", (c) => deletePost(c));
+
+const getAllUserRoute = createRoute({
+  method: "get",
+  path: "/api/posts/data",
+  responses: {
+    200: {
+      description: "Get all data user",
+      content: {
+        "application/json": {
+          schema: z.array(postSchema),
+        },
+      },
+    },
+    500: {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: z.object({ error: z.string() }),
+        },
+      },
+    },
+  },
+});
+
+postRouter.openapi(getAllUserRoute, getPost);
+
+const route = createRoute({
+  method: "get",
+  path: "/api/posts/data",
+  responses: {
+    200: {
+      description: "Get all user",
+      content: {
+        "application/json": {
+          schema: z.array(postSchema),
+        },
+      },
+    },
+    500: {
+      description: "Internal Server Error",
+      content: {
+        "application/json": {
+          schema: z.object({ error: z.string() }),
+        },
+      },
+    },
+  },
+});
+
+postRouter.openapi(route, getPost);
+
+postRouter.doc("/doc", {
+  openapi: "3.0.0",
+  info: {
+    title: "User API",
+    version: "1.0.0",
+    description: "API untuk mengelola data pengguna",
+  },
+});
+
+postRouter.get("/ui", swaggerUI({ url: "/api/posts/doc" }));

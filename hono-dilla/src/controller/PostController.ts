@@ -11,9 +11,10 @@ export const getPost = async (c: Context) => {
       orderBy: [asc(post.id)],
     });
 
-    return c.json(data);
+    return c.json(data, 200);
   } catch (e: unknown) {
     console.error(`Error getting posts: ${e}`);
+    return c.json({ error: "Internal Server Error" }, 500);
   }
 };
 
@@ -50,13 +51,14 @@ export async function createPost(c: Context) {
     });
   } catch (e: unknown) {
     console.error(`Error creating post: ${e}`);
+    return c.json({ error: "Internal Server Error" }, 500);
   }
 }
 
 export async function getPostById(c: Context) {
   try {
     const postId = parseInt(c.req.param("id"));
-    console.log("Post ID:", postId);
+    // console.log("Post ID:", postId);
 
     const data = await db.select().from(post).where(eq(post.id, postId));
     console.log("Post data:", data);
@@ -141,6 +143,7 @@ export async function updatePost(c: Context) {
     return c.json(user);
   } catch (e: unknown) {
     console.error(`Error updating post: ${e}`);
+    return c.json({ error: "Internal Server Error" }, 500);
   }
 }
 
@@ -175,5 +178,6 @@ export async function deletePost(c: Context) {
     );
   } catch (e: unknown) {
     console.error(`Error deleting user: ${e}`);
+    return c.json({ error: "Internal Server Error" }, 500);
   }
 }
