@@ -163,7 +163,7 @@ const createUserRoute = createRoute({
   },
   responses: {
     201: {
-      description: "Person created successfully",
+      description: "User created successfully",
       content: {
         "application/json": {
           schema: postSchema,
@@ -205,7 +205,7 @@ const updateUserRoute = createRoute({
   },
   responses: {
     200: {
-      description: "Person updated successfully",
+      description: "User updated successfully",
       content: {
         "application/json": {
           schema: postSchema,
@@ -224,6 +224,39 @@ const updateUserRoute = createRoute({
 });
 
 postRouter.openapi(updateUserRoute, updatePost);
+
+const deleteUserRoute = createRoute({
+  method: "delete",
+  path: "/api/posts/data/{id}",
+  parameters: [
+    {
+      name: "id",
+      in: "path",
+      required: true,
+      schema: z.string(),
+    },
+  ],
+  responses: {
+    200: {
+      description: "User deleted successfully",
+      content: {
+        "application/json": {
+          schema: z.object({ message: z.string() }),
+        },
+      },
+    },
+  },
+  500: {
+    description: "Internal server error",
+    content: {
+      "application/json": {
+        schema: z.object({ error: z.string() }),
+      },
+    },
+  },
+});
+
+postRouter.openapi(deleteUserRoute, deletePost);
 
 postRouter.doc("/doc", {
   openapi: "3.0.0",
