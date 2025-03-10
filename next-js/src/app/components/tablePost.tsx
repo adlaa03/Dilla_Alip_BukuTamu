@@ -18,39 +18,67 @@ import {
 import { PostModel } from "../types";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { mutate } from "swr";
-import Swal from "sweetalert2";
+import { useDeletepost } from "../utils/hooks/post";
+import { useRouter } from "next/navigation";
+// import { mutate } from "swr";
+// import Swal from "sweetalert2";
 
-const DELETE = async (id: number) => {
-  try {
-    const res = await fetch(`/utils/queries/users/${id}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-    });
+// const DELETE = async (id: number) => {
+//   try {
+//     const res = await fetch(`/utils/queries/users/${id}`, {
+//       method: "DELETE",
+//       headers: { "Content-Type": "application/json" },
+//     });
 
-    const content = await res.json();
-    console.log("DELETE Response:", content);
+//     const content = await res.json();
+//     console.log("DELETE Response:", content);
 
-    if (!res.ok) {
-      console.error("Server Error:", content);
-      throw new Error(`Error: ${res.status} ${res.statusText}`);
-    }
+//     if (!res.ok) {
+//       console.error("Server Error:", content);
+//       throw new Error(`Error: ${res.status} ${res.statusText}`);
+//     }
 
-    if (res.status === 200 && content.message.includes("Berhasil Dihapus")) {
-      console.log("User successfully deleted.");
-      mutate(`/utils/queries/users`);
-      return true;
-    } else {
-      console.error("Unexpected response format:", content);
-      return false;
-    }
-  } catch (error) {
-    console.error("Failed to delete post:", error);
-    return false;
-  }
-};
+//     if (res.status === 200 && content.message.includes("Berhasil Dihapus")) {
+//       console.log("User successfully deleted.");
+//       mutate(`/utils/queries/users`);
+//       return true;
+//     } else {
+//       console.error("Unexpected response format:", content);
+//       return false;
+//     }
+//   } catch (error) {
+//     console.error("Failed to delete post:", error);
+//     return false;
+//   }
+// };
 
 export default function DataTable({ data }: { data: PostModel[] }) {
+  const router = useRouter();
+  const mutationDelete = useDeletepost();
+
+  const onDelete = (id: number) => {
+    const isConfirmed = window.confirm(
+      "Apakah Anda yakin ingin menghapus data ini?"
+    );
+
+    if (!isConfirmed) return;
+
+    mutationDelete.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          alert("Data Berhasil Dihapus!");
+          router.refresh();
+        },
+        onError: (error) => {
+          alert(
+            "Gagal menghapus data: " + (error?.message || "Terjadi kesalahan")
+          );
+        },
+      }
+    );
+  };
+
   const columns: ColumnDef<PostModel>[] = [
     { accessorKey: "id", header: "ID" },
     { accessorKey: "username", header: "Username" },
@@ -65,31 +93,7 @@ export default function DataTable({ data }: { data: PostModel[] }) {
             variant="destructive"
             size="sm"
             className="bg-red-500 text-white"
-            onClick={() => {
-              Swal.fire({
-                title: "Apakah Anda Yakin?",
-                text: "Data yang dihapus tidak dapat dikembalikan.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#d33",
-                cancelButtonColor: "#3085d6",
-                confirmButtonText: "Ya, hapus!",
-                cancelButtonText: "Batal",
-              }).then(async (result) => {
-                if (result.isConfirmed) {
-                  const success = await DELETE(row.original.id);
-                  if (success) {
-                    Swal.fire("Terhapus!", "Data berhasil dihapus.", "success");
-                  } else {
-                    Swal.fire(
-                      "Gagal!",
-                      "Terjadi kesalahan saat menghapus data.",
-                      "error"
-                    );
-                  }
-                }
-              });
-            }}
+            onClick={() => onDelete(row.original.id)}
           >
             Delete
           </Button>

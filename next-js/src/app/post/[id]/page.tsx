@@ -5,45 +5,34 @@ import { use } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useViewpost } from "@/app/utils/hooks/post";
 
 export default function Detail({
   params,
 }: {
   params: Promise<{ id: number }>;
 }) {
-  const resolvedParams = use(params);
-  const { id } = resolvedParams;
+  const { id: userId } = use(params);
 
-  const {
-    data: user,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["user", id],
-    queryFn: async () => {
-      const res = await fetch(`/utils/queries/users/${resolvedParams.id}`);
-      if (!res.ok) throw new Error("Failed to fetch user");
-      return res.json();
-    },
-  });
+  const getUserById = useViewpost(userId);
 
-  console.log("data user: ", user);
+  const user = getUserById.data;
 
-  if (isLoading) {
-    return (
-      <div>
-        <span>Loading...</span>
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div>
+  //       <span>Loading...</span>
+  //     </div>
+  //   );
+  // }
 
-  if (error) {
-    return (
-      <div>
-        <span>Error fetching data</span>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div>
+  //       <span>Error fetching data</span>
+  //     </div>
+  //   );
+  // }
 
   if (!user) {
     return (

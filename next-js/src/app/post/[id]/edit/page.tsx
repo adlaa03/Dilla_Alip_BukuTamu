@@ -1,110 +1,22 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-// import React, { useEffect, use } from "react";
-// import { useRouter } from "next/navigation";
-// import { fetcher } from "@/app/libs";
-// import useSWR from "swr";
-// import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
-// import { Input } from "@/components/ui/input";
-// import { Textarea } from "@/components/ui/textarea";
-// import { Button } from "@/components/ui/button";
-// import { useForm } from "react-hook-form";
-// import {
-//   Form,
-//   FormControl,
-//   FormField,
-//   FormItem,
-//   FormLabel,
-// } from "@/components/ui/form";
-// import { userDefaultValues } from "@/app/types/defaultValues";
-// import { z } from "zod";
-// import { userSchema } from "@/app/types/userSchema";
 import Post from "@/app/components/Post";
 import React, { use } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { GET } from "@/app/utils/queries/users/[id]/route";
-
-const fetchUser = async (id: number) => {
-  const res = await fetch(`/utils/queries/users/${id}`);
-  if (!res.ok) throw new Error("Failed to fetch user");
-  return res.json();
-};
+import { UpdatePost } from "@/app/utils/queries/users/[id]/route";
+import { useViewpost } from "@/app/utils/hooks/post";
 
 export default function PostEdit({
   params,
 }: {
   params: Promise<{ id: number }>;
 }) {
-  // const router = useRouter();
-  const resolvedParams = use(params);
-  const userId = resolvedParams.id;
-  const {
-    data: user,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["user", userId],
-    queryFn: () => fetchUser(userId),
-    enabled: !!userId,
-  });
+  const { id: userId } = use(params);
 
-  console.log("data :", user);
-  // const form = useForm({
-  //   defaultValues: {
-  //     username: "",
-  //     name: "",
-  //     address: "",
-  //     phone: "",
-  //   },
-  // });
-  // const form = useForm({ defaultValues: userDefaultValues });
+  const getUserById = useViewpost(userId);
 
-  // useEffect(() => {
-  //   if (user) {
-  //     form.reset({
-  //       username: user.username,
-  //       name: user.name,
-  //       address: user.address,
-  //       phone: user.phone,
-  //     });
-  //   }
-  // }, [user]);
-
-  // const mutation = useMutation({
-  //   mutationFn: async (formData: {
-  //     username: string;
-  //     name: string;
-  //     address: string;
-  //     phone: string;
-  //   }) => {
-  //     const res = await fetch(`/utils/queries/users/${userId}`, {
-  //       method: "PUT",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify(formData),
-  //     });
-
-  //     if (!res.ok) {
-  //       throw new Error("Failed to update user");
-  //     }
-
-  //     return res.json();
-  //   },
-  //   onSuccess: () => {
-  //     router.push("/post");
-  //     alert("Data berhasil diubah");
-  //   },
-  //   onError: (error) => {
-  //     alert(error.message);
-  //   },
-  // });
-
-  // // const submit = (data: any) => {
-  // //   mutation.mutate(data);
-  // // };
-  // function submit(values: z.infer<typeof userSchema>) {
-  //   mutation.mutate(values);
-  // }
+  const user = getUserById.data;
 
   if (!user) return <div>User not found.</div>;
 
@@ -192,12 +104,7 @@ export default function PostEdit({
             </div>
           </form>
         </Form> */}
-        <Post
-          user={user}
-          titleText="Update User"
-          buttonText="Update"
-          required={true}
-        ></Post>
+        <Post user={user} titleText="Update User" buttonText="Update" />
       </div>
     </div>
   );

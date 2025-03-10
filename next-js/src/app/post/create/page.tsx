@@ -144,7 +144,7 @@ export default function UserCreate() {
             </div>
           </form>
         </Form> */}
-        <Post titleText="Add User" buttonText="Submit" required={true}></Post>
+        <Post titleText="Add User" buttonText="Submit" />
       </div>
     </div>
   );

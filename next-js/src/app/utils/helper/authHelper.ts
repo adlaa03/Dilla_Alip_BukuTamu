@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export async function getAuthToken() {
   const loginResponse = await fetch("http://localhost:3000/api/posts/login", {
     method: "POST",
@@ -15,7 +14,7 @@ export async function getAuthToken() {
   return loginData.token;
 }
 
-export async function getApiKey(token: any) {
+export async function getApiKey(token: string) {
   const response = await fetch("http://localhost:3000/api/posts", {
     headers: {
       Authorization: `Bearer ${token}`,

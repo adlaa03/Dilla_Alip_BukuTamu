@@ -39,7 +39,6 @@
 
 "use client";
 
-import React from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -55,13 +54,12 @@ import { FormProps } from "../types/index";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userForm, userSchema } from "../types/userSchema";
+import { userSchema } from "../types/userSchema";
 import { userDefaultValues } from "../types/defaultValues";
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import Swal from "sweetalert2";
-import { PUT } from "../utils/queries/users/[id]/route";
-import { POST } from "../utils/queries/users/route";
+// import { PUT } from "../utils/queries/users/[id]/route";
+import { usePost, useUpdatepost } from "../utils/hooks/post";
 
 // export default function UserForm({
 //   form,
@@ -80,70 +78,133 @@ export default function UserForm({ user, titleText, buttonText }: FormProps) {
     defaultValues: user || userDefaultValues,
   });
 
-  const mutation = useMutation({
-    mutationFn: async (data: userForm) => {
-      if (user) {
-        // UPDATE
-        const res = await fetch(`/utils/queries/users/${user.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
+  // const mutation = useMutation({
+  //   mutationFn: async (data: userForm) => {
+  //     if (user) {
+  //       // UPDATE
+  //       const res = await fetch(`/utils/queries/users/${user.id}`, {
+  //         method: "PUT",
+  //         headers: { "Content-Type": "application/json" },
+  //         body: JSON.stringify(data),
+  //       });
 
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(`Failed to update user: ${errorText}`);
-        }
-        return res.json();
-      } else {
-        // CREATE
-        const res = await fetch("/utils/queries/users", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+  //       if (!res.ok) {
+  //         const errorText = await res.text();
+  //         throw new Error(`Failed to update user: ${errorText}`);
+  //       }
+  //       return res.json();
+  //     } else {
+  //       // CREATE
+  //       const res = await fetch("/utils/queries/users", {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(data),
+  //       });
+
+  //       if (!res.ok) {
+  //         throw new Error("Failed to create user");
+  //       }
+  //       return res.json();
+  //     }
+  //   },
+  //   onSuccess: () => {
+  //     Swal.fire({
+  //       title: user
+  //         ? "Data Berhasil Diperbarui!"
+  //         : "Data Berhasil Ditambahkan!",
+  //       text: user
+  //         ? "Informasi pengguna telah diperbarui."
+  //         : "Pengguna baru telah ditambahkan.",
+  //       icon: "success",
+  //       confirmButtonColor: "#3085d6",
+  //       confirmButtonText: "OK",
+  //     }).then(() => {
+  //       router.push("/post");
+  //     });
+  //   },
+  //   onError: (error) => {
+  //     Swal.fire({
+  //       title: "Gagal!",
+  //       text: error.message,
+  //       icon: "error",
+  //       confirmButtonColor: "#d33",
+  //       confirmButtonText: "OK",
+  //     });
+  //   },
+  // });
+
+  // function submit(values: z.infer<typeof userSchema>) {
+  //   mutation.mutate(values);
+  // }
+
+  const mutationUpdate = useUpdatepost();
+  const mutationPost = usePost();
+
+  // const onSubmit = form.handleSubmit((data) => {
+  //   if (user) {
+  //     mutationUpdate.mutate({
+  //       idUser: user?.id || 0,
+  //       body: data,
+  //     });
+  //   } else {
+  //     mutationPost.mutate({
+  //       body: data,
+  //     });
+  //   }
+  // });
+
+  const onSubmit = form.handleSubmit((data) => {
+    const isConfirmed = window.confirm(
+      user
+        ? "Apakah Anda yakin ingin memperbarui data ini?"
+        : "Apakah Anda yakin ingin menambahkan data ini?"
+    );
+
+    if (!isConfirmed) return;
+
+    if (user) {
+      mutationUpdate.mutate(
+        {
+          idUser: user?.id || 0,
+          body: data,
+        },
+        {
+          onSuccess: () => {
+            alert(
+              "Data Berhasil Diperbarui!\n\nInformasi pengguna telah diperbarui."
+            );
+            router.push("/post");
           },
-          body: JSON.stringify(data),
-        });
-
-        if (!res.ok) {
-          throw new Error("Failed to create user");
+          onError: (error) => {
+            alert("Gagal!\n\n" + (error?.message || "Terjadi kesalahan"));
+          },
         }
-        return res.json();
-      }
-    },
-    onSuccess: () => {
-      Swal.fire({
-        title: user
-          ? "Data Berhasil Diperbarui!"
-          : "Data Berhasil Ditambahkan!",
-        text: user
-          ? "Informasi pengguna telah diperbarui."
-          : "Pengguna baru telah ditambahkan.",
-        icon: "success",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "OK",
-      }).then(() => {
-        router.push("/post");
-      });
-    },
-    onError: (error) => {
-      Swal.fire({
-        title: "Gagal!",
-        text: error.message,
-        icon: "error",
-        confirmButtonColor: "#d33",
-        confirmButtonText: "OK",
-      });
-    },
+      );
+    } else {
+      mutationPost.mutate(
+        {
+          body: data,
+        },
+        {
+          onSuccess: () => {
+            alert(
+              "Data Berhasil Ditambahkan!\n\nPengguna baru telah ditambahkan."
+            );
+            router.push("/post");
+          },
+          onError: (error) => {
+            alert("Gagal!\n\n" + (error?.message || "Terjadi kesalahan"));
+          },
+        }
+      );
+    }
   });
-
-  function submit(values: z.infer<typeof userSchema>) {
-    mutation.mutate(values);
-  }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(submit)} className="w-full mx-32">
+      <form onSubmit={onSubmit} className="w-full mx-32">
         <div className="text-[#1A120B] text-center">
           <span className="font-bold py-2 block text-4xl">{titleText}</span>
         </div>

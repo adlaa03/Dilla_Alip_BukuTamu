@@ -25,5 +25,5 @@ export interface FormProps {
   user?: userForm;
   titleText: string;
   buttonText: string;
-  required: boolean;
+  // required: boolean;
 }
