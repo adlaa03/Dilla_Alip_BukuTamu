@@ -2,14 +2,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-// import useSWR, { mutate } from "swr";
-import { fetcher } from "../libs";
-import { PostModel } from "../types";
 import Link from "next/link";
-// import Post from "../components/Post";
 import { Button } from "@/components/ui/button";
 import DataTable from "../components/tablePost";
-import { useQuery } from "@tanstack/react-query";
 import { useAllPost } from "../utils/hooks/post";
 
 export default function Users() {
@@ -18,10 +13,6 @@ export default function Users() {
   useEffect(() => {
     mutate();
   }, [mutate]);
-  // const { data, error } = useQuery<{ result: PostModel[] }>({
-  //   queryKey: ["users"],
-  //   queryFn: () => fetcher("/utils/queries/users"),
-  // });
 
   if (error) return <div>Failed to load</div>;
   if (!data) return <div>Loading...</div>;

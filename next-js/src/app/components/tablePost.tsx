@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -20,58 +21,39 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useDeletepost } from "../utils/hooks/post";
 import { useRouter } from "next/navigation";
-// import { mutate } from "swr";
-// import Swal from "sweetalert2";
-
-// const DELETE = async (id: number) => {
-//   try {
-//     const res = await fetch(`/utils/queries/users/${id}`, {
-//       method: "DELETE",
-//       headers: { "Content-Type": "application/json" },
-//     });
-
-//     const content = await res.json();
-//     console.log("DELETE Response:", content);
-
-//     if (!res.ok) {
-//       console.error("Server Error:", content);
-//       throw new Error(`Error: ${res.status} ${res.statusText}`);
-//     }
-
-//     if (res.status === 200 && content.message.includes("Berhasil Dihapus")) {
-//       console.log("User successfully deleted.");
-//       mutate(`/utils/queries/users`);
-//       return true;
-//     } else {
-//       console.error("Unexpected response format:", content);
-//       return false;
-//     }
-//   } catch (error) {
-//     console.error("Failed to delete post:", error);
-//     return false;
-//   }
-// };
+import { toast } from "sonner";
 
 export default function DataTable({ data }: { data: PostModel[] }) {
   const router = useRouter();
   const mutationDelete = useDeletepost();
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
-  const onDelete = (id: number) => {
-    const isConfirmed = window.confirm(
-      "Apakah Anda yakin ingin menghapus data ini?"
+  const confirmDelete = (id: number) => {
+    setDeleteId(id);
+    toast(
+      "Apakah Anda yakin akan menghapus data user? Jika data dihapus, tidak bisa dikembalikan.",
+      {
+        action: {
+          label: "Iya, Hapus",
+          onClick: () => onDelete(id),
+        },
+        cancel: {
+          label: "Tidak",
+          onClick: () => setDeleteId(null),
+        },
+      }
     );
-
-    if (!isConfirmed) return;
-
+  };
+  const onDelete = (id: number) => {
     mutationDelete.mutate(
       { id },
       {
         onSuccess: () => {
-          alert("Data Berhasil Dihapus!");
+          toast.success("Data Berhasil Dihapus!");
           router.refresh();
         },
         onError: (error) => {
-          alert(
+          toast.error(
             "Gagal menghapus data: " + (error?.message || "Terjadi kesalahan")
           );
         },
@@ -93,7 +75,7 @@ export default function DataTable({ data }: { data: PostModel[] }) {
             variant="destructive"
             size="sm"
             className="bg-red-500 text-white"
-            onClick={() => onDelete(row.original.id)}
+            onClick={() => confirmDelete(row.original.id)}
           >
             Delete
           </Button>

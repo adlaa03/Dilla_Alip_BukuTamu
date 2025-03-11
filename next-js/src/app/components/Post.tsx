@@ -58,8 +58,8 @@ import { userSchema } from "../types/userSchema";
 import { userDefaultValues } from "../types/defaultValues";
 import { QueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-// import { PUT } from "../utils/queries/users/[id]/route";
 import { usePost, useUpdatepost } from "../utils/hooks/post";
+import { toast } from "sonner";
 
 // export default function UserForm({
 //   form,
@@ -78,134 +78,54 @@ export default function UserForm({ user, titleText, buttonText }: FormProps) {
     defaultValues: user || userDefaultValues,
   });
 
-  // const mutation = useMutation({
-  //   mutationFn: async (data: userForm) => {
-  //     if (user) {
-  //       // UPDATE
-  //       const res = await fetch(`/utils/queries/users/${user.id}`, {
-  //         method: "PUT",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify(data),
-  //       });
-
-  //       if (!res.ok) {
-  //         const errorText = await res.text();
-  //         throw new Error(`Failed to update user: ${errorText}`);
-  //       }
-  //       return res.json();
-  //     } else {
-  //       // CREATE
-  //       const res = await fetch("/utils/queries/users", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(data),
-  //       });
-
-  //       if (!res.ok) {
-  //         throw new Error("Failed to create user");
-  //       }
-  //       return res.json();
-  //     }
-  //   },
-  //   onSuccess: () => {
-  //     Swal.fire({
-  //       title: user
-  //         ? "Data Berhasil Diperbarui!"
-  //         : "Data Berhasil Ditambahkan!",
-  //       text: user
-  //         ? "Informasi pengguna telah diperbarui."
-  //         : "Pengguna baru telah ditambahkan.",
-  //       icon: "success",
-  //       confirmButtonColor: "#3085d6",
-  //       confirmButtonText: "OK",
-  //     }).then(() => {
-  //       router.push("/post");
-  //     });
-  //   },
-  //   onError: (error) => {
-  //     Swal.fire({
-  //       title: "Gagal!",
-  //       text: error.message,
-  //       icon: "error",
-  //       confirmButtonColor: "#d33",
-  //       confirmButtonText: "OK",
-  //     });
-  //   },
-  // });
-
-  // function submit(values: z.infer<typeof userSchema>) {
-  //   mutation.mutate(values);
-  // }
-
   const mutationUpdate = useUpdatepost();
   const mutationPost = usePost();
 
-  const onSubmit = form.handleSubmit((data) => {
+  const onSubmit = form.handleSubmit(async (data) => {
+    if (!data.phone.startsWith("08")) {
+      toast.error("Nomor telepon harus dimulai dengan 08!");
+      return;
+    }
+    if (data.username.includes(" ")) {
+      toast.error("Username tidak boleh mengandung spasi!");
+      return;
+    }
+
     if (user) {
-      mutationUpdate.mutate({
-        idUser: user?.id || 0,
-        body: data,
-      });
+      mutationUpdate.mutate(
+        {
+          idUser: user?.id || 0,
+          body: data,
+        },
+        {
+          onSuccess: (response) => {
+            console.log("Update Success:", response);
+            toast.success("User berhasil diperbarui!");
+          },
+          onError: (error) => {
+            console.error("Update Error:", error);
+            toast.error("Gagal memperbarui user!");
+          },
+        }
+      );
     } else {
-      mutationPost.mutate({
-        body: data,
-      });
+      mutationPost.mutate(
+        {
+          body: data,
+        },
+        {
+          onSuccess: (response) => {
+            console.log("Create Success:", response);
+            toast.success("User berhasil ditambahkan!");
+          },
+          onError: (error) => {
+            console.error("Create Error:", error);
+            toast.error("Gagal menambahkan user!");
+          },
+        }
+      );
     }
   });
-
-  // const onSubmit = form.handleSubmit((data) => {
-  //   if (!data.phone.startsWith("08")) {
-  //     alert("Nomor telepon harus dimulai dengan 08!");
-  //     return;
-  //   }
-
-  //   const isConfirmed = window.confirm(
-  //     user
-  //       ? "Apakah Anda yakin ingin memperbarui data ini?"
-  //       : "Apakah Anda yakin ingin menambahkan data ini?"
-  //   );
-
-  //   if (!isConfirmed) return;
-
-  //   if (user) {
-  //     mutationUpdate.mutate(
-  //       {
-  //         idUser: user?.id || 0,
-  //         body: data,
-  //       },
-  //       {
-  //         onSuccess: () => {
-  //           alert(
-  //             "Data Berhasil Diperbarui!\n\nInformasi pengguna telah diperbarui."
-  //           );
-  //           router.push("/post");
-  //         },
-  //         onError: (error) => {
-  //           alert("Gagal!\n\n" + (error?.message || "Terjadi kesalahan"));
-  //         },
-  //       }
-  //     );
-  //   } else {
-  //     mutationPost.mutate(
-  //       {
-  //         body: data,
-  //       },
-  //       {
-  //         onSuccess: () => {
-  //           alert(
-  //             "Data Berhasil Ditambahkan!\n\nPengguna baru telah ditambahkan."
-  //           );
-  //           router.push("/post");
-  //         },
-  //         onError: (error) => {
-  //           alert("Gagal!\n\n" + (error?.message || "Terjadi kesalahan"));
-  //         },
-  //       }
-  //     );
-  //   }
-  // });
 
   return (
     <Form {...form}>
@@ -228,6 +148,7 @@ export default function UserForm({ user, titleText, buttonText }: FormProps) {
                   <Input
                     placeholder="Enter username"
                     {...field}
+                    disabled={!!user}
                     className="border-2 border-[#3C2A21] focus:border-[#3C2A21] rounded-md p-2 placeholder-[#3C2A21]"
                   />
                 </FormControl>

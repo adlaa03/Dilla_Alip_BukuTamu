@@ -18,22 +18,6 @@ export default function Detail({
 
   const user = getUserById.data;
 
-  // if (isLoading) {
-  //   return (
-  //     <div>
-  //       <span>Loading...</span>
-  //     </div>
-  //   );
-  // }
-
-  // if (error) {
-  //   return (
-  //     <div>
-  //       <span>Error fetching data</span>
-  //     </div>
-  //   );
-  // }
-
   if (!user) {
     return (
       <div>
