@@ -1,4 +1,4 @@
-import { mysqlTable, serial, varchar } from "drizzle-orm/mysql-core";
+import { mysqlTable, serial, timestamp, varchar } from "drizzle-orm/mysql-core";
 export const post = mysqlTable("posts", {
   id: serial("id").primaryKey(),
   username: varchar({ length: 255 }).notNull(),
@@ -8,6 +8,13 @@ export const post = mysqlTable("posts", {
 });
 export const auth = mysqlTable("auth", {
   key: varchar({ length: 191 }),
+});
+
+export const blacklistedTokens = mysqlTable("blacklisted_tokens", {
+  id: serial("id").primaryKey(),
+  token: varchar({ length: 500 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
 });
 export type Post = typeof post.$inferSelect;
 export type InsertPost = typeof post.$inferInsert;

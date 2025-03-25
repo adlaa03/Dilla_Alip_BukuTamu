@@ -14,11 +14,11 @@ import { basicAuth } from "hono/basic-auth";
 import { bearerAuth } from "hono/bearer-auth";
 
 import { db } from "../db/index.js";
-import { apiKeyAuth } from "../middleware/auth";
+import { apiKeyAuth, jwtAuthWithBlacklist } from "../middleware/auth";
 
 import { jwt } from "hono/jwt";
 import type { JwtVariables } from "hono/jwt";
-import { loginUser } from "../controller/authController";
+import { loginUser, logoutUser } from "../controller/authController";
 import { postSchema } from "../db/schema";
 
 import { zValidator } from "@hono/zod-validator";
@@ -66,6 +66,11 @@ postRouter.put("/data/:id", zValidator("json", postSchema), (c) =>
 
 //route post delete
 postRouter.delete("/data/:id", (c) => deletePost(c));
+
+//route post logout
+postRouter.post("/logout", logoutUser);
+
+postRouter.use("/data/*", jwtAuthWithBlacklist);
 
 const getAllUserRoute = createRoute({
   method: "get",
