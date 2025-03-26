@@ -22,11 +22,10 @@ export async function createPost(c: Context) {
   try {
     const body = await c.req.json();
 
-    const username =
-      typeof body["username"] === "string" ? body["username"] : "";
     const name = typeof body["name"] === "string" ? body["name"] : "";
     const address = typeof body["address"] === "string" ? body["address"] : "";
     const phone = typeof body["phone"] === "string" ? body["phone"] : "";
+    const comment = typeof body["comment"] === "string" ? body["comment"] : "";
 
     //HonoApi
     if (!body.name || !body.address || !body.phone) {
@@ -37,17 +36,17 @@ export async function createPost(c: Context) {
     }
 
     const data = await db.insert(post).values({
-      username: username,
       name: name,
       address: address,
       phone: phone,
+      comment: comment,
     });
 
     return c.json({
-      username: username,
       name: name,
       address: address,
       phone: phone,
+      comment: comment,
     });
   } catch (e: unknown) {
     console.error(`Error creating post: ${e}`);
@@ -82,45 +81,16 @@ export async function getPostById(c: Context) {
   }
 }
 
-// export async function updatePost(c: Context) {
-//   try {
-//     const postId = parseInt(c.req.param("id"));
-//     const body = await c.req.json();
-
-//     const username =
-//       typeof body["username"] === "string" ? body["username"] : "";
-//     const name = typeof body["name"] === "string" ? body["name"] : "";
-//     const address = typeof body["address"] === "string" ? body["address"] : "";
-//     const phone = typeof body["phone"] === "string" ? body["phone"] : "";
-
-//     await db
-//       .update(post)
-//       .set({
-//         username: username,
-//         name: name,
-//         address: address,
-//         phone: phone,
-//       })
-//       .where(eq(post.id, postId));
-
-//     const updatedPost = await db.select().from(post).where(eq(post.id, postId));
-//     return c.json(updatedPost);
-//   } catch (e: unknown) {
-//     console.error(`Error updating post: ${e}`);
-//   }
-// }
-
 export async function updatePost(c: Context) {
   try {
     const userId = parseInt(c.req.param("id"));
 
     const body = await c.req.json();
 
-    const username =
-      typeof body["username"] === "string" ? body["username"] : "";
     const name = typeof body["name"] === "string" ? body["name"] : "";
     const address = typeof body["address"] === "string" ? body["address"] : "";
     const phone = typeof body["phone"] === "string" ? body["phone"] : "";
+    const comment = typeof body["comment"] === "string" ? body["comment"] : "";
 
     if (!body.name || !body.address || !body.phone) {
       return c.json(
@@ -133,7 +103,6 @@ export async function updatePost(c: Context) {
     const user = await prisma.post.update({
       where: { id: userId },
       data: {
-        username: username,
         name: name,
         address: address,
         phone: phone,

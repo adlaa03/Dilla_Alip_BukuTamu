@@ -6,15 +6,6 @@ import { postRouter } from "./routes";
 
 const app = new Hono().basePath("/api");
 
-// app.use(
-//   "*",
-//   cors({
-//     origin: "http://localhost:3000",
-//     allowMethods: ["GET", "POST", "PUT", "DELETE"],
-//     allowHeaders: ["*"],
-//   })
-// );
-
 app.use(
   cors({
     origin: ["http://localhost:3000", "http://localhost:3001"],

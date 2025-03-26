@@ -1,7 +1,4 @@
-//import hono
 import { Hono } from "hono";
-
-//import controller
 import {
   createPost,
   deletePost,
@@ -9,27 +6,14 @@ import {
   getPost,
   updatePost,
 } from "../controller/PostController";
-
-import { basicAuth } from "hono/basic-auth";
-import { bearerAuth } from "hono/bearer-auth";
-
 import { db } from "../db/index.js";
-import { apiKeyAuth, jwtAuthWithBlacklist } from "../middleware/auth";
-
-import { jwt } from "hono/jwt";
-import type { JwtVariables } from "hono/jwt";
 import { loginUser, logoutUser } from "../controller/authController";
 import { postSchema } from "../db/schema";
-
 import { zValidator } from "@hono/zod-validator";
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { swaggerUI } from "@hono/swagger-ui";
-import { get } from "node:http";
 
-// export const postRouter = new Hono<{ Variables: JwtVariables }>();
 export const postRouter = new OpenAPIHono();
-
-// const SECRET_KEY: any = process.env.KEY;
 
 postRouter.post("/login", loginUser);
 
@@ -45,32 +29,14 @@ postRouter.get("/", async (c) => {
   }
 });
 
-// postRouter.use("/data/*", jwt({ secret: SECRET_KEY }));
-
-// postRouter.use("/data/*", apiKeyAuth);
-//routes posts index
 postRouter.get("/data", (c) => getPost(c));
-
-//routes posts create
-// postRouter.post("/data", (c) => createPost(c));
 postRouter.post("/data", zValidator("json", postSchema), (c) => createPost(c));
-
-//routes posts detail
 postRouter.get("/data/:id", (c) => getPostById(c));
-
-//route post update
-// postRouter.put("/data/:id", (c) => updatePost(c));
 postRouter.put("/data/:id", zValidator("json", postSchema), (c) =>
   updatePost(c)
 );
-
-//route post delete
 postRouter.delete("/data/:id", (c) => deletePost(c));
-
-//route post logout
 postRouter.post("/logout", logoutUser);
-
-postRouter.use("/data/*", jwtAuthWithBlacklist);
 
 const getAllUserRoute = createRoute({
   method: "get",
