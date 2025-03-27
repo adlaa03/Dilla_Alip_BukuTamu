@@ -3,7 +3,6 @@ import { Context } from "hono";
 import { asc, eq } from "drizzle-orm";
 import { db } from "../db/index";
 import { post } from "../db/schema";
-import prisma from "../../prisma/client";
 
 export const getPost = async (c: Context) => {
   try {
@@ -57,7 +56,6 @@ export async function createPost(c: Context) {
 export async function getPostById(c: Context) {
   try {
     const postId = parseInt(c.req.param("id"));
-    // console.log("Post ID:", postId);
 
     const data = await db.select().from(post).where(eq(post.id, postId));
     console.log("Post data:", data);
@@ -83,8 +81,7 @@ export async function getPostById(c: Context) {
 
 export async function updatePost(c: Context) {
   try {
-    const userId = parseInt(c.req.param("id"));
-
+    const userId = Number.parseInt(c.req.param("id"));
     const body = await c.req.json();
 
     const name = typeof body["name"] === "string" ? body["name"] : "";
@@ -98,18 +95,25 @@ export async function updatePost(c: Context) {
         400
       );
     }
-    //
 
-    const user = await prisma.post.update({
-      where: { id: userId },
-      data: {
+    const user = await db.select().from(post).where(eq(post.id, userId));
+    if (user.length === 0) {
+      return c.json({ error: "Post not found" }, 404);
+    }
+
+    await db
+      .update(post)
+      .set({
         name: name,
         address: address,
         phone: phone,
-      },
-    });
+        comment: comment,
+      })
+      .where(eq(post.id, userId));
 
-    return c.json(user);
+    const updatedPost = await db.select().from(post).where(eq(post.id, userId));
+
+    return c.json(updatedPost[0]);
   } catch (e: unknown) {
     console.error(`Error updating post: ${e}`);
     return c.json({ error: "Internal Server Error" }, 500);
@@ -118,14 +122,10 @@ export async function updatePost(c: Context) {
 
 export async function deletePost(c: Context) {
   try {
-    const postId = parseInt(c.req.param("id"));
+    const postId = Number.parseInt(c.req.param("id"));
 
-    //HonoApi
-    const person = await prisma.post.findUnique({
-      where: { id: postId },
-    });
-
-    if (!person) {
+    const person = await db.select().from(post).where(eq(post.id, postId));
+    if (person.length === 0) {
       return c.json(
         {
           statusCode: 404,
@@ -134,7 +134,6 @@ export async function deletePost(c: Context) {
         404
       );
     }
-    //
 
     await db.delete(post).where(eq(post.id, postId));
 
