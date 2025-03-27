@@ -41,7 +41,10 @@ export async function createPost(c: Context) {
       comment: comment,
     });
 
+    const insertedId = data[0].insertId;
+
     return c.json({
+      id: insertedId,
       name: name,
       address: address,
       phone: phone,
