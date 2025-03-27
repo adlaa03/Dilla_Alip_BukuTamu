@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import { bigint, mysqlTable, varchar } from "drizzle-orm/mysql-core";
 
 export const post = mysqlTable("posts", {
